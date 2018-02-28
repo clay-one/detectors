@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Detectors.Kafka.Controllers
 {
@@ -39,6 +40,12 @@ namespace Detectors.Kafka.Controllers
         public IActionResult GetTopicTotalOffset(string clusterId, string topicId)
         {
             return Ok("Not implemented yet.");
+        }
+        
+        [HttpGet("offsets/total/rate/{rateMinutes?}")]
+        public IActionResult GetTopicTotalOffsetRate(string clusterId, string topicId, int rateMinutes = 1)
+        {
+            return Ok("Not implemented yet." + rateMinutes);
         }
     }
 }

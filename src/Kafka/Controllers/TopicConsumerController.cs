@@ -16,5 +16,18 @@ namespace Detectors.Kafka.Controllers
         {
             return Ok("Not implemented yet.");
         }
+        
+        [HttpGet("commit/details")]
+        public IActionResult GetConsumerCommitDetails(string clusterId, string topicId, string consumerId)
+        {
+            return Ok("Not implemented yet.");
+        }
+        
+        [HttpGet("commit/total")]
+        public IActionResult GetConsumerTotalCommit(string clusterId, string topicId, string consumerId)
+        {
+            return Ok("Not implemented yet.");
+        }
+        
     }
 }
