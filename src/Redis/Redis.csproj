@@ -5,7 +5,6 @@
     <RootNamespace>Detectors.Redis</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Controllers" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
