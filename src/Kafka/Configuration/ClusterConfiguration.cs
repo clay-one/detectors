@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Detectors.Kafka.Configuration
 {
@@ -12,5 +13,10 @@ namespace Detectors.Kafka.Configuration
         
         public string Id { get; set; }
         public List<BrokerConfiguration> Brokers { get; set; }
+
+        public string BuildBrokersString()
+        {
+            return string.Join(',', Brokers.Select(b => $"{b.Host}:{b.Port}"));
+        }
     }
 }
