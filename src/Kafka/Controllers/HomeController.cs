@@ -1,9 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Detectors.Kafka.Configuration;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace Detectors.Kafka.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IConfiguration _configuration;
+        public HomeController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         [HttpGet("")]
         public IActionResult GetHomepage()
         {
@@ -13,7 +23,7 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("clusters")]
         public IActionResult GetClusterList()
         {
-            return Ok("List of clusters");
+            return Ok(_configuration.GetClusters().Select(c => new {c.Id}));
         }
     }
 }
