@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Confluent.Kafka;
 using Detectors.Kafka.Configuration;
+using Detectors.Kafka.Logic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
@@ -31,26 +29,15 @@ namespace Detectors.Kafka.Controllers
             if (clusterConfig == null)
                 return NotFound();
 
-            var config = new Dictionary<string, object>
+            using (var topic = new KafkaTopicConsumerWrapper(clusterConfig, topicId, consumerId))
             {
-                {"bootstrap.servers", clusterConfig.BuildBrokersString()},
-                {"group.id", consumerId}
-            };
+                var result = Task.WhenAll(
+                        Task.Run(() => topic.GetTotalMaxOffsets()),
+                        Task.Run(() => topic.TotalCommitted)
+                    )
+                    .GetAwaiter().GetResult().Sum();
 
-            using (var consumer = new Consumer(config))
-            {
-                using (var producer = new Producer(config))
-                {
-                    var md = producer.GetMetadata(false, topicId, TimeSpan.FromSeconds(5));
-                    var tpos = consumer.Committed(md.Topics[0].Partitions.Select(p => new TopicPartition(topicId, p.PartitionId)),
-                        TimeSpan.FromSeconds(5));
-
-                    return Ok(tpos.AsParallel().Select(tpo =>
-                    {
-                        var wo = consumer.QueryWatermarkOffsets(tpo.TopicPartition);
-                        return wo.High - tpo.Offset.Value;
-                    }).Sum());
-                }
+                return Ok(result);
             }
         }
         

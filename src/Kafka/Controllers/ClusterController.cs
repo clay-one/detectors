@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Confluent.Kafka;
 using Detectors.Kafka.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -23,12 +21,7 @@ namespace Detectors.Kafka.Controllers
             if (clusterConfig == null)
                 return NotFound();
 
-            var config = new Dictionary<string, object>
-            {
-                {"bootstrap.servers", clusterConfig.BuildBrokersString()},
-            };
-
-            using (var producer = new Producer(config))
+            using (var producer = clusterConfig.BuildProducer())
             {
                 var md = producer.GetMetadata(true, null, TimeSpan.FromSeconds(5));
                 return Ok(md);
