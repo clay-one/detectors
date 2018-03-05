@@ -42,10 +42,10 @@ namespace Detectors.Kafka.Controllers
             return Ok("Not implemented yet.");
         }
         
-        [HttpGet("offsets/total/rate/{rateMinutes?}")]
-        public IActionResult GetTopicTotalOffsetRate(string clusterId, string topicId, int rateMinutes = 1)
+        [HttpGet("offsets/total/rate/{rate?}")]
+        public IActionResult GetTopicTotalOffsetRate(string clusterId, string topicId, string rate)
         {
-            return Ok("Not implemented yet." + rateMinutes);
+            return Ok("Not implemented yet." + rate);
         }
     }
 }
