@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Confluent.Kafka;
 using Detectors.Kafka.Configuration;
 
@@ -8,39 +7,31 @@ namespace Detectors.Kafka.Logic
 {
     public class KafkaTopicWrapper : IDisposable
     {
-        protected readonly ClusterConfiguration _configuration;
-        protected readonly string _topicId;
+        protected readonly ClusterConfiguration Configuration;
+        protected readonly string TopicId;
         
-        protected readonly Lazy<TopicMetadata> _metadata;
-        protected readonly Lazy<Producer> _producer;
+        protected readonly Lazy<TopicMetadata> TopicMetadata;
+        protected readonly Lazy<Producer> Producer;
 
         public KafkaTopicWrapper(ClusterConfiguration configuration, string topicId)
         {
-            _configuration = configuration;
-            _topicId = topicId;
+            Configuration = configuration;
+            TopicId = topicId;
 
-            _producer = new Lazy<Producer>(() => _configuration
-                .BuildProducer());
-
-            _metadata = new Lazy<TopicMetadata>(() => _producer
-                .Value
-                .GetMetadata(false, _topicId, TimeSpan.FromSeconds(3))
-                .Topics
-                .FirstOrDefault());
+            Producer = new Lazy<Producer>(LoadProducer);
+            TopicMetadata = new Lazy<TopicMetadata>(LoadTopicMetadata);
         }
         
-        public TopicMetadata Metadata => _metadata.Value;
+        public TopicMetadata Metadata => TopicMetadata.Value;
         
         public long GetMaxOffset(int partitionId)
         {
-            var result = _producer.Value.QueryWatermarkOffsets(new TopicPartition(_topicId, partitionId)).High.Value;
-            Console.WriteLine($"Max offset of {partitionId} is {result}");
-            return result;
+            return Producer.Value.QueryWatermarkOffsets(new TopicPartition(TopicId, partitionId)).High.Value;
         }
 
         public long GetTotalMaxOffsets()
         {
-            return _metadata.Value.Partitions
+            return TopicMetadata.Value.Partitions
                 .AsParallel()
                 .Select(p => GetMaxOffset(p.PartitionId))
                 .Sum();
@@ -48,8 +39,22 @@ namespace Detectors.Kafka.Logic
 
         public virtual void Dispose()
         {
-            if (_producer.IsValueCreated)
-                _producer.Value.Dispose();
+            if (Producer.IsValueCreated)
+                Producer.Value.Dispose();
+        }
+
+        private Producer LoadProducer()
+        {
+            return Configuration.BuildProducer();
+        }
+
+        private TopicMetadata LoadTopicMetadata()
+        {
+            return Producer
+                .Value
+                .GetMetadata(false, TopicId, TimeSpan.FromSeconds(5))
+                .Topics
+                .FirstOrDefault();
         }
     }
 }
