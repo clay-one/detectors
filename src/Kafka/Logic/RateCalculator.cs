@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Detectors.Kafka.Logic
 {
@@ -8,30 +8,40 @@ namespace Detectors.Kafka.Logic
         private const int MinSampleCountToCleanup = 100;
         private const int MinDurationMinutes = 60;
         
-        private readonly ConcurrentQueue<RateSample> _samples;
+        private readonly Queue<RateSample> _samples;
+        private readonly object _lockObject;
 
         public RateCalculator()
         {
-            _samples = new ConcurrentQueue<RateSample>();
+            _samples = new Queue<RateSample>();
+            _lockObject = new object();
         }
 
         public void AddSample(double value)
         {
-            _samples.Enqueue(new RateSample {Time = DateTime.UtcNow, Value = value});
+            lock (_lockObject)
+            {
+                _samples.Enqueue(new RateSample {Time = DateTime.UtcNow, Value = value});
 
-            if (_samples.Count < MinSampleCountToCleanup)
-                return;
-
-            if (_samples.TryPeek(out var peeked))
-                if (peeked.Time > (DateTime.UtcNow - TimeSpan.FromMinutes(MinDurationMinutes)))
+                if (_samples.Count < MinSampleCountToCleanup)
                     return;
 
-            _samples.TryDequeue(out var _);
+                if (_samples.TryPeek(out var peeked))
+                    if (peeked.Time > (DateTime.UtcNow - TimeSpan.FromMinutes(MinDurationMinutes)))
+                        return;
+
+                _samples.TryDequeue(out var _);
+            }
         }
 
         public double CalculateRateAverage(DateTime from, DateTime to)
         {
-            var samples = _samples.ToArray();
+            RateSample[] samples;
+            
+            lock (_lockObject)
+            {
+                samples = _samples.ToArray();
+            }
 
             if (from >= to)
                 return 0;
@@ -91,8 +101,8 @@ namespace Detectors.Kafka.Logic
             if (d1 + d2 <= 0)
                 return prevSample;
 
-            var value = (nextSample.Value - prevSample.Value) / (d1 + d2) * d1;
-            return new RateSample {Time = time, Value = value};
+            var valueDelta = (nextSample.Value - prevSample.Value) / (d1 + d2) * d1;
+            return new RateSample {Time = time, Value = prevSample.Value + valueDelta};
         }
 
     }

@@ -31,10 +31,18 @@ namespace Detectors.Kafka.Logic
 
         public long GetTotalMaxOffsets()
         {
-            return TopicMetadata.Value.Partitions
+            var result = TopicMetadata.Value.Partitions
                 .AsParallel()
                 .Select(p => GetMaxOffset(p.PartitionId))
                 .Sum();
+            
+            GetTotalMaxOffsetsRateCalculator().AddSample(result);
+            return result;
+        }
+
+        public RateCalculator GetTotalMaxOffsetsRateCalculator()
+        {
+            return RateCalculatorCollection.GetCalculator(TotalMaxOffsetsRateCalculatorKey, true);
         }
 
         public virtual void Dispose()
@@ -56,5 +64,9 @@ namespace Detectors.Kafka.Logic
                 .Topics
                 .FirstOrDefault();
         }
+        
+        private string TotalMaxOffsetsRateCalculatorKey => 
+            $"kafka/cluster/{Configuration.Id}topic/{TopicId}/offsets/total";
+
     }
 }

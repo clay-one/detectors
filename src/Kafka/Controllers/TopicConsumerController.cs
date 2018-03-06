@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Detectors.Kafka.Configuration;
 using Detectors.Kafka.Logic;
@@ -33,7 +34,7 @@ namespace Detectors.Kafka.Controllers
             {
                 var result = Task.WhenAll(
                         Task.Run(() => topic.GetTotalMaxOffsets()),
-                        Task.Run(() => -topic.TotalCommitted)
+                        Task.Run(() => -topic.GetTotalCommitted())
                     )
                     .GetAwaiter().GetResult().Sum();
 
@@ -56,7 +57,33 @@ namespace Detectors.Kafka.Controllers
 
             using (var topic = new KafkaTopicConsumerWrapper(clusterConfig, topicId, consumerId))
             {
-                return Ok(topic.TotalCommitted);
+                return Ok(topic.GetTotalCommitted());
+            }
+        }
+
+        [HttpGet("commit/total/rate/{duration?}")]
+        public IActionResult GetTopicTotalOffsetRate(string clusterId, string topicId, string consumerId, 
+            string duration = "1m")
+        {
+            var clusterConfig = _configuration.GetCluster(clusterId);
+            if (clusterConfig == null)
+                return NotFound();
+
+            var durationTimeSpan = DurationStringParser.Parse(duration);
+            if (durationTimeSpan <= TimeSpan.Zero)
+                return BadRequest("Invalid time duration specified");
+            
+            using (var topic = new KafkaTopicConsumerWrapper(clusterConfig, topicId, consumerId))
+            {
+                // Calculate the committed value to add a sample
+                topic.GetTotalCommitted();
+
+                var utcNow = DateTime.UtcNow;
+                var rate = topic
+                    .GetTotalCommittedRateCalculator()
+                    .CalculateRateAverage(utcNow - durationTimeSpan, utcNow);
+            
+                return Ok(rate);
             }
         }
         

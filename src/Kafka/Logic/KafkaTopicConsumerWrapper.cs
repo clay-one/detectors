@@ -20,8 +20,19 @@ namespace Detectors.Kafka.Logic
             Tpos = new Lazy<List<TopicPartitionOffsetError>>(LoadTpos);
         }
 
-        public long TotalCommitted => Tpos.Value.Select(tpo => tpo.Offset.Value).Sum();
+        public long GetTotalCommitted()
+        {
+            var result = Tpos.Value.Select(tpo => tpo.Offset.Value).Sum();
+            GetTotalCommittedRateCalculator().AddSample(result);
+
+            return result;
+        }
         
+        public RateCalculator GetTotalCommittedRateCalculator()
+        {
+            return RateCalculatorCollection.GetCalculator(TotalCommittedRateCalculatorKey, true);
+        }
+
         public override void Dispose()
         {
             base.Dispose();
@@ -35,6 +46,9 @@ namespace Detectors.Kafka.Logic
             return Configuration.BuildConsumer(ConsumerId);
         }
         
+        private string TotalCommittedRateCalculatorKey => 
+            $"kafka/cluster/{Configuration.Id}topic/{TopicId}/consumer/{ConsumerId}/commit/total";
+
         private List<TopicPartitionOffsetError> LoadTpos()
         {
             return Consumer.Value.Committed(Metadata.Partitions.Select(
