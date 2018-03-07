@@ -54,7 +54,7 @@ namespace Detectors.Kafka.Controllers
 
             using (var topic = new KafkaTopicWrapper(clusterConfig, topicId))
             {
-                return Ok(topic.GetTotalMaxOffsets());
+                return Ok($"[{topic.GetTotalMaxOffsets()}]");
             }
         }
         
@@ -79,7 +79,7 @@ namespace Detectors.Kafka.Controllers
                     .GetTotalMaxOffsetsRateCalculator()
                     .CalculateRateAverage(utcNow - durationTimeSpan, utcNow);
             
-                return Ok(rate);
+                return Ok($"[{rate}]");
             }
         }
     }

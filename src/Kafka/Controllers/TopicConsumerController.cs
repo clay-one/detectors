@@ -38,7 +38,7 @@ namespace Detectors.Kafka.Controllers
                     )
                     .GetAwaiter().GetResult().Sum();
 
-                return Ok(result);
+                return Ok($"[{result}]");
             }
         }
         
@@ -57,7 +57,7 @@ namespace Detectors.Kafka.Controllers
 
             using (var topic = new KafkaTopicConsumerWrapper(clusterConfig, topicId, consumerId))
             {
-                return Ok(topic.GetTotalCommitted());
+                return Ok($"[{topic.GetTotalCommitted()}]");
             }
         }
 
@@ -83,7 +83,7 @@ namespace Detectors.Kafka.Controllers
                     .GetTotalCommittedRateCalculator()
                     .CalculateRateAverage(utcNow - durationTimeSpan, utcNow);
             
-                return Ok(rate);
+                return Ok($"[{rate}]");
             }
         }
         
