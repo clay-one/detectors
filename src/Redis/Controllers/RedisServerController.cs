@@ -2,7 +2,7 @@
 
 namespace Detectors.Redis.Controllers
 {
-    [Route("server/{serverId}")]
+    [Route("redis/server/{serverId}")]
     public class RedisServerController : Controller
     {
         [HttpGet("ping")]

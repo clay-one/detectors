@@ -2,7 +2,7 @@
 
 namespace Detectors.Redis.Controllers
 {
-    [Route("server/{serverId}/db/{dbId}")]
+    [Route("redis/server/{serverId}/db/{dbId}")]
     public class RedisDatabaseController : Controller
     {
         [HttpGet("keys/{keyPattern}")]

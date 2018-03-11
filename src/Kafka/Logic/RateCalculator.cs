@@ -26,11 +26,14 @@ namespace Detectors.Kafka.Logic
                 if (_samples.Count < MinSampleCountToCleanup)
                     return;
 
-                if (_samples.TryPeek(out var peeked))
-                    if (peeked.Time > (DateTime.UtcNow - TimeSpan.FromMinutes(MinDurationMinutes)))
-                        return;
+                if (_samples.Count <= 0)
+                    return;
+                
+                var peeked = _samples.Peek();
+                if (peeked.Time > (DateTime.UtcNow - TimeSpan.FromMinutes(MinDurationMinutes)))
+                    return;
 
-                _samples.TryDequeue(out var _);
+                _samples.Dequeue();
             }
         }
 
@@ -63,7 +66,7 @@ namespace Detectors.Kafka.Logic
 
         private RateSample CalculateFromSample(RateSample[] samples, DateTime time)
         {
-            for (int i = 0; i < samples.Length; i++)
+            for (var i = 0; i < samples.Length; i++)
             {
                 if (samples[i].Time < time)
                     continue;
@@ -79,7 +82,7 @@ namespace Detectors.Kafka.Logic
 
         private RateSample CalculateToSample(RateSample[] samples, DateTime time)
         {
-            for (int i = samples.Length - 1; i >= 0; i--)
+            for (var i = samples.Length - 1; i >= 0; i--)
             {
                 if (samples[i].Time > time)
                     continue;

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Detectors.Kafka.Controllers
 {
-    [Route("cluster/{clusterId}/topic/{topicId}/consumer/{consumerId}")]
+    [Route("kafka/cluster/{clusterId}/topic/{topicId}/consumer/{consumerId}")]
     public class TopicConsumerController : Controller
     {
         private readonly IConfiguration _configuration;

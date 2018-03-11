@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Detectors.Kafka.Controllers
 {
+    [Route("kafka")]
     public class HomeController : Controller
     {
         private readonly IConfiguration _configuration;
@@ -17,7 +18,7 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("")]
         public IActionResult GetHomepage()
         {
-            return Redirect("/api/clusters");
+            return Redirect("/api/kafka/clusters");
         }
         
         [HttpGet("clusters")]

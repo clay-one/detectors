@@ -27,7 +27,7 @@ namespace Detectors.Kafka.Configuration
         
         private string BuildBrokersString()
         {
-            return string.Join(',', Brokers.Select(b => $"{b.Host}:{b.Port}"));
+            return string.Join(",", Brokers.Select(b => $"{b.Host}:{b.Port}"));
         }
 
         private Dictionary<string, object> BuildConfigDictionary(string consumerId = null)

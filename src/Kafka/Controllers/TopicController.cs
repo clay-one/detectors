@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Detectors.Kafka.Controllers
 {
-    [Route("cluster/{clusterId}/topic/{topicId}")]
+    [Route("kafka/cluster/{clusterId}/topic/{topicId}")]
     public class TopicController : Controller
     {
         private readonly IConfiguration _configuration;

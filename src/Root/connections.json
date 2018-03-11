@@ -1,0 +1,22 @@
+﻿{
+  "kafka": {
+    "clusters": [
+      {
+        "id": "cluster-a",
+        "brokers": [
+          { "host": "", "port": 1234 },
+          { "host": "", "port": 1234 },
+          { "host": "", "port": 1234 }
+        ]
+      },
+      {
+        "id": "cluster-b",
+        "brokers": [
+          { "host": "", "port": 1234 },
+          { "host": "", "port": 1234 },
+          { "host": "", "port": 1234 }
+        ]
+      }
+    ]
+  }
+}

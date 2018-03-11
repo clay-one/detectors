@@ -2,7 +2,7 @@
 
 namespace Detectors.Kafka.Controllers
 {
-    [Route("cluster/{clusterId}/topic/{topicId}/partition/{partitionId}")]
+    [Route("kafka/cluster/{clusterId}/topic/{topicId}/partition/{partitionId}")]
     public class TopicPartitionController : Controller
     {
         [HttpGet("offsets")]

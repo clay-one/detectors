@@ -8,7 +8,7 @@ namespace Detectors.Kafka.Configuration
     {
         public static List<ClusterConfiguration> GetClusters(this IConfiguration configuration)
         {
-            return configuration.GetSection("clusters").GetChildren().Select(c => c.Get<ClusterConfiguration>()).ToList();
+            return configuration.GetSection("kafka:clusters").GetChildren().Select(c => c.Get<ClusterConfiguration>()).ToList();
         }
         
         public static ClusterConfiguration GetCluster(this IConfiguration configuration, string id)

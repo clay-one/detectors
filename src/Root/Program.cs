@@ -1,9 +1,14 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Detectors.Kafka
+namespace Root
 {
     public class Program
     {
@@ -23,8 +28,8 @@ namespace Detectors.Kafka
                     
                     config.AddJsonFile("appsettings.json", true, true);
                     config.AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", true, true);
-                    config.AddJsonFile("clusters.json", true, true);
-                    config.AddJsonFile($"clusters.{hostingEnvironment.EnvironmentName}.json", true, true);
+                    config.AddJsonFile("connections.json", true, true);
+                    config.AddJsonFile($"connections.{hostingEnvironment.EnvironmentName}.json", true, true);
                     config.AddEnvironmentVariables();
                 })
                 .ConfigureLogging((hostingContext, logging) =>

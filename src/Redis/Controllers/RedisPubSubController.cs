@@ -2,7 +2,7 @@
 
 namespace Detectors.Redis.Controllers
 {
-    [Route("server/{serverId}/db/{dbId}/pubsub")]
+    [Route("redis/server/{serverId}/db/{dbId}/pubsub")]
     public class RedisPubSubController : Controller
     {
         [HttpGet("channels/{pattern}")]
