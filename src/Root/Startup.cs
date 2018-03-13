@@ -22,21 +22,35 @@ namespace Root
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            MapDeveloperMiddleware(app, env);
+            MapWebApi(app);
+            MapDefault(app);
+
+            var secondaryApp = app.New();
+            MapWebApi(secondaryApp);
+            SecondaryPipeline.SecondaryRequestDelegate = secondaryApp.Build();
+        }
+
+        private static void MapDeveloperMiddleware(IApplicationBuilder app, IHostingEnvironment env)
+        {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+        }
 
-            app.Map("/api", apiApp =>
-            {
-                apiApp.UseMvc();
-            });
-            
+        private static void MapDefault(IApplicationBuilder app)
+        {
             app.Run(context =>
             {
-                context.Response.Redirect("/api"); 
+                context.Response.Redirect("/api");
                 return Task.CompletedTask;
             });
+        }
+
+        private static void MapWebApi(IApplicationBuilder app)
+        {
+            app.Map("/api", apiApp => { apiApp.UseMvc(); });
         }
     }
 }
