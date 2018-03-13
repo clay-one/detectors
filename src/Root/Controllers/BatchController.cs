@@ -11,18 +11,19 @@ namespace Root.Controllers
         [HttpPost("batch")]
         public async Task<IActionResult> RunBatch([FromBody] RunBatchRequest request)
         {
-            var tasks = request.Requests.AsParallel().Select(async r =>
+            var tasks = request.Requests.AsParallel().Select(async (r, i) =>
             {
                 var result = await SecondaryPipeline.Invoke(r.Uri, requestServices: HttpContext.RequestServices);
                 return new RunBatchResponseItem
                 {
+                    Index = i,
                     StatusCode = result.StatusCode,
                     Body = result.ResponseBody
                 };
             });
 
             var taskResults = await Task.WhenAll(tasks);
-            return Ok(new RunBatchResponse {Responses = taskResults.ToList()});
+            return Ok(new RunBatchResponse {Responses = taskResults.OrderBy(r => r.Index).ToList()});
         }
     }
 }
