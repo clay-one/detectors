@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Detectors.Kafka.Configuration;
-using Detectors.Kafka.Logic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -19,6 +18,12 @@ namespace Detectors.Kafka.Controllers
 
         [HttpGet("")]
         public IActionResult GetClusterInfo(string clusterId)
+        {
+            return Redirect($"{clusterId}/metadata");
+        }
+
+        [HttpGet("metadata")]
+        public IActionResult GetClusterMetadata(string clusterId)
         {
             var clusterConfig = _configuration.GetCluster(clusterId);
             if (clusterConfig == null)
