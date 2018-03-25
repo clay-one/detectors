@@ -8,10 +8,10 @@ using Newtonsoft.Json;
 namespace Detectors.Kafka.Controllers
 {
     [Route("kafka/cluster/{clusterId}")]
-    public class ClusterController : Controller
+    public class KafkaClusterController : Controller
     {
         private readonly IConfiguration _configuration;
-        public ClusterController(IConfiguration configuration)
+        public KafkaClusterController(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -25,7 +25,7 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("metadata")]
         public IActionResult GetClusterMetadata(string clusterId)
         {
-            var clusterConfig = _configuration.GetCluster(clusterId);
+            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
             if (clusterConfig == null)
                 return NotFound();
 
@@ -40,7 +40,7 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("topics")]
         public IActionResult GetTopicList(string clusterId)
         {
-            var clusterConfig = _configuration.GetCluster(clusterId);
+            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
             if (clusterConfig == null)
                 return NotFound();
 
@@ -64,7 +64,7 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("groups")]
         public IActionResult GetGroupList(string clusterId)
         {
-            var clusterConfig = _configuration.GetCluster(clusterId);
+            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
             if (clusterConfig == null)
                 return NotFound();
 

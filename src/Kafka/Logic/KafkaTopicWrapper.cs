@@ -7,13 +7,13 @@ namespace Detectors.Kafka.Logic
 {
     public class KafkaTopicWrapper : IDisposable
     {
-        protected readonly ClusterConfiguration Configuration;
+        protected readonly KafkaClusterConfiguration Configuration;
         protected readonly string TopicId;
         
         protected readonly Lazy<TopicMetadata> TopicMetadata;
         protected readonly Lazy<Producer> Producer;
 
-        public KafkaTopicWrapper(ClusterConfiguration configuration, string topicId)
+        public KafkaTopicWrapper(KafkaClusterConfiguration configuration, string topicId)
         {
             Configuration = configuration;
             TopicId = topicId;

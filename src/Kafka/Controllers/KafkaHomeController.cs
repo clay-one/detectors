@@ -7,10 +7,10 @@ using Microsoft.Extensions.Configuration;
 namespace Detectors.Kafka.Controllers
 {
     [Route("kafka")]
-    public class HomeController : Controller
+    public class KafkaHomeController : Controller
     {
         private readonly IConfiguration _configuration;
-        public HomeController(IConfiguration configuration)
+        public KafkaHomeController(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -24,7 +24,7 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("clusters")]
         public IActionResult GetClusterList()
         {
-            return Ok(_configuration.GetClusters().Select(c => new {c.Id}));
+            return Ok(_configuration.GetKafkaClusters().Select(c => new {c.Id}));
         }
     }
 }

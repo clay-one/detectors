@@ -3,7 +3,7 @@
 namespace Detectors.Kafka.Controllers
 {
     [Route("kafka/cluster/{clusterId}/topic/{topicId}/partition/{partitionId}")]
-    public class TopicPartitionController : Controller
+    public class KafkaTopicPartitionController : Controller
     {
         [HttpGet("offsets")]
         public IActionResult GetTopicPartitionOffsets(string clusterId, string topicId, string partitionId)

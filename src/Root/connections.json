@@ -18,5 +18,20 @@
         ]
       }
     ]
+  },
+  "redis": {
+    "connections": [
+      {
+        "id": "connection-one",
+        "endPoints": ["server-one:1234", "server-two:5678"]
+      },
+      {
+        "id": "connection-two",
+        "endPoints": ["server-a:1234", "server-b:5678"],
+        "connectRetry": 5,
+        "connectTimeout": 30,
+        "defaultDatabase": 5
+      }
+    ]
   }
 }
