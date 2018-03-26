@@ -1,4 +1,5 @@
 ﻿{
+  "comment": "This is a sample configuration file. For deployment or development, you should rename this file to 'connections.json' or 'connections.<env>.json' and fill in the values.",
   "kafka": {
     "clusters": [
       {
