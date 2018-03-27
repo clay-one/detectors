@@ -23,6 +23,7 @@ namespace Detectors.Kafka.Controllers
         }
 
         [HttpGet("metadata")]
+        [HttpGet("metadata.{format}")]
         public IActionResult GetClusterMetadata(string clusterId)
         {
             var clusterConfig = _configuration.GetKafkaCluster(clusterId);
@@ -32,12 +33,12 @@ namespace Detectors.Kafka.Controllers
             using (var producer = clusterConfig.BuildProducer())
             {
                 var md = producer.GetMetadata(true, null, TimeSpan.FromSeconds(5));
-                var result = JsonConvert.SerializeObject(md, Formatting.Indented);
-                return Ok(result);
+                return Ok(md);
             }
         }
         
         [HttpGet("topics")]
+        [HttpGet("topics.{format}")]
         public IActionResult GetTopicList(string clusterId)
         {
             var clusterConfig = _configuration.GetKafkaCluster(clusterId);
@@ -56,8 +57,7 @@ namespace Detectors.Kafka.Controllers
                         PartitionCount = t.Partitions.Count
                     }).ToList()
                 };
-                var result = JsonConvert.SerializeObject(resultObject, Formatting.Indented);
-                return Ok(result);
+                return Ok(resultObject);
             }
         }
         
