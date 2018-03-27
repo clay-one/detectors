@@ -1,12 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
+using Root.Formatters;
 using Root.Pipeline;
 
 namespace Root
@@ -34,12 +33,23 @@ namespace Root
                     options.Filters.Add(typeof(FormatFilter));
                     
                     options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+                    options.OutputFormatters.Add(new ToStringOutputFormatter());
+                    options.OutputFormatters.Add(new CsvOutputFormatter());
+                    options.OutputFormatters.Add(new JsvOutputFormatter());
+                    options.OutputFormatters.Add(new DumpOutputFormatter());
+                    
                     options.InputFormatters.Add(new XmlSerializerInputFormatter());
                 })
                 .AddFormatterMappings(mappings =>
                 {
-                    mappings.SetMediaTypeMappingForFormat("js", MediaTypeHeaderValue.Parse("application/json"));
-                    mappings.SetMediaTypeMappingForFormat("xml", MediaTypeHeaderValue.Parse("application/xml"));
+                    mappings.SetMediaTypeMappingForFormat("js", "application/json");
+                    mappings.SetMediaTypeMappingForFormat("xml", "application/xml");
+                    mappings.SetMediaTypeMappingForFormat("txt", "text/plain");
+                    mappings.SetMediaTypeMappingForFormat("str", "application/vnd+detectors.string");
+                    mappings.SetMediaTypeMappingForFormat("dump", "application/vnd+detectors.dump");
+                    mappings.SetMediaTypeMappingForFormat("dmp", "application/vnd+detectors.dump");
+                    mappings.SetMediaTypeMappingForFormat("jsv", "application/vnd+detectors.jsv");
+                    mappings.SetMediaTypeMappingForFormat("csv", "application/vnd+detectors.csv");
                 });
         }
 
