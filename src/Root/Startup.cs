@@ -32,24 +32,25 @@ namespace Root
                 {
                     options.Filters.Add(typeof(FormatFilter));
                     
-                    options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
-                    options.OutputFormatters.Add(new ToStringOutputFormatter());
                     options.OutputFormatters.Add(new CsvOutputFormatter());
-                    options.OutputFormatters.Add(new JsvOutputFormatter());
                     options.OutputFormatters.Add(new DumpOutputFormatter());
+                    options.OutputFormatters.Add(new JsvOutputFormatter());
+                    options.OutputFormatters.Add(new ToStringOutputFormatter());
+                    options.OutputFormatters.Add(new XmlOutputFormatter());
                     
                     options.InputFormatters.Add(new XmlSerializerInputFormatter());
                 })
                 .AddFormatterMappings(mappings =>
                 {
                     mappings.SetMediaTypeMappingForFormat("js", "application/json");
-                    mappings.SetMediaTypeMappingForFormat("xml", "application/xml");
                     mappings.SetMediaTypeMappingForFormat("txt", "text/plain");
-                    mappings.SetMediaTypeMappingForFormat("str", "application/vnd+detectors.string");
+                    
+                    mappings.SetMediaTypeMappingForFormat("csv", "application/vnd+detectors.csv");
                     mappings.SetMediaTypeMappingForFormat("dump", "application/vnd+detectors.dump");
                     mappings.SetMediaTypeMappingForFormat("dmp", "application/vnd+detectors.dump");
                     mappings.SetMediaTypeMappingForFormat("jsv", "application/vnd+detectors.jsv");
-                    mappings.SetMediaTypeMappingForFormat("csv", "application/vnd+detectors.csv");
+                    mappings.SetMediaTypeMappingForFormat("str", "application/vnd+detectors.string");
+                    mappings.SetMediaTypeMappingForFormat("xml", "application/xml");
                 });
         }
 
