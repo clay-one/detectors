@@ -32,6 +32,7 @@ namespace Root
                 {
                     options.Filters.Add(typeof(FormatFilter));
                     
+                    options.OutputFormatters.Add(new BracketsOutputFormatter());
                     options.OutputFormatters.Add(new CsvOutputFormatter());
                     options.OutputFormatters.Add(new DumpOutputFormatter());
                     options.OutputFormatters.Add(new JsvOutputFormatter());
@@ -45,6 +46,8 @@ namespace Root
                     mappings.SetMediaTypeMappingForFormat("js", "application/json");
                     mappings.SetMediaTypeMappingForFormat("txt", "text/plain");
                     
+                    mappings.SetMediaTypeMappingForFormat("brk", "application/vnd+detectors.brackets");
+                    mappings.SetMediaTypeMappingForFormat("brackets", "application/vnd+detectors.brackets");
                     mappings.SetMediaTypeMappingForFormat("csv", "application/vnd+detectors.csv");
                     mappings.SetMediaTypeMappingForFormat("dump", "application/vnd+detectors.dump");
                     mappings.SetMediaTypeMappingForFormat("dmp", "application/vnd+detectors.dump");

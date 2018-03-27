@@ -46,6 +46,7 @@ namespace Detectors.Kafka.Controllers
         }
 
         [HttpGet("offsets/total")]
+        [HttpGet("offsets/total.{format}")]
         public IActionResult GetTopicTotalOffset(string clusterId, string topicId)
         {
             var clusterConfig = _configuration.GetKafkaCluster(clusterId);
