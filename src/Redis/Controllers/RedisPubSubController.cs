@@ -2,23 +2,23 @@
 
 namespace Detectors.Redis.Controllers
 {
-    [Route("redis/server/{serverId}/db/{dbId}/pubsub")]
+    [Route("redis/connection/{connectionId}/db/{dbId}/pubsub")]
     public class RedisPubSubController : Controller
     {
         [HttpGet("channels/{pattern}")]
-        public IActionResult GetChannelList(string serverId, int dbId, string pattern)
+        public IActionResult GetChannelList(string connectionId, int dbId, string pattern)
         {
             return Ok("Not implemented yet.");
         }
         
         [HttpGet("channel/{channel}/numsub")]
-        public IActionResult GetChannelNumSub(string serverId, int dbId, string channel)
+        public IActionResult GetChannelNumSub(string connectionId, int dbId, string channel)
         {
             return Ok("Not implemented yet.");
         }
         
         [HttpGet("numpat")]
-        public IActionResult GetNumPat(string serverId, int dbId, string channel)
+        public IActionResult GetNumPat(string connectionId, int dbId, string channel)
         {
             return Ok("Not implemented yet.");
         }

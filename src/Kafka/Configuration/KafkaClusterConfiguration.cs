@@ -4,7 +4,7 @@ using Confluent.Kafka;
 
 namespace Detectors.Kafka.Configuration
 {
-    public class ClusterConfiguration
+    public class KafkaClusterConfiguration
     {
         public class BrokerConfiguration
         {

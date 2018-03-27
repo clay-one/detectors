@@ -9,10 +9,10 @@ using Microsoft.Extensions.Configuration;
 namespace Detectors.Kafka.Controllers
 {
     [Route("kafka/cluster/{clusterId}/topic/{topicId}/consumer/{consumerId}")]
-    public class TopicConsumerController : Controller
+    public class KafkaTopicConsumerController : Controller
     {
         private readonly IConfiguration _configuration;
-        public TopicConsumerController(IConfiguration configuration)
+        public KafkaTopicConsumerController(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -26,7 +26,7 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("lag/total")]
         public IActionResult GetConsumerTotalLag(string clusterId, string topicId, string consumerId)
         {
-            var clusterConfig = _configuration.GetCluster(clusterId);
+            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
             if (clusterConfig == null)
                 return NotFound();
 
@@ -51,7 +51,7 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("commit/total")]
         public IActionResult GetConsumerTotalCommit(string clusterId, string topicId, string consumerId)
         {
-            var clusterConfig = _configuration.GetCluster(clusterId);
+            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
             if (clusterConfig == null)
                 return NotFound();
 
@@ -65,7 +65,7 @@ namespace Detectors.Kafka.Controllers
         public IActionResult GetTopicTotalOffsetRate(string clusterId, string topicId, string consumerId, 
             string duration = "1m")
         {
-            var clusterConfig = _configuration.GetCluster(clusterId);
+            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
             if (clusterConfig == null)
                 return NotFound();
 

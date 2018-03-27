@@ -1,0 +1,38 @@
+﻿{
+  "comment": "This is a sample configuration file. For deployment or development, you should rename this file to 'connections.json' or 'connections.<env>.json' and fill in the values.",
+  "kafka": {
+    "clusters": [
+      {
+        "id": "cluster-a",
+        "brokers": [
+          { "host": "", "port": 1234 },
+          { "host": "", "port": 1234 },
+          { "host": "", "port": 1234 }
+        ]
+      },
+      {
+        "id": "cluster-b",
+        "brokers": [
+          { "host": "", "port": 1234 },
+          { "host": "", "port": 1234 },
+          { "host": "", "port": 1234 }
+        ]
+      }
+    ]
+  },
+  "redis": {
+    "connections": [
+      {
+        "id": "connection-one",
+        "endPoints": ["server-one:1234", "server-two:5678"]
+      },
+      {
+        "id": "connection-two",
+        "endPoints": ["server-a:1234", "server-b:5678"],
+        "connectRetry": 5,
+        "connectTimeout": 30,
+        "defaultDatabase": 5
+      }
+    ]
+  }
+}

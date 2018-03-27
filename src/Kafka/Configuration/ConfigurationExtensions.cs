@@ -6,14 +6,14 @@ namespace Detectors.Kafka.Configuration
 {
     public static class ConfigurationExtensions
     {
-        public static List<ClusterConfiguration> GetClusters(this IConfiguration configuration)
+        public static List<KafkaClusterConfiguration> GetKafkaClusters(this IConfiguration configuration)
         {
-            return configuration.GetSection("kafka:clusters").GetChildren().Select(c => c.Get<ClusterConfiguration>()).ToList();
+            return configuration.GetSection("kafka:clusters").GetChildren().Select(c => c.Get<KafkaClusterConfiguration>()).ToList();
         }
         
-        public static ClusterConfiguration GetCluster(this IConfiguration configuration, string id)
+        public static KafkaClusterConfiguration GetKafkaCluster(this IConfiguration configuration, string id)
         {
-            return configuration.GetClusters().FirstOrDefault(c => c.Id == id);
+            return configuration.GetKafkaClusters().FirstOrDefault(c => c.Id == id);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Detectors.Kafka.Logic
         protected readonly Lazy<Consumer> Consumer;
         protected readonly Lazy<List<TopicPartitionOffsetError>> Tpos;
         
-        public KafkaTopicConsumerWrapper(ClusterConfiguration configuration, string topicId, string consumerId)
+        public KafkaTopicConsumerWrapper(KafkaClusterConfiguration configuration, string topicId, string consumerId)
             : base(configuration, topicId)
         {
             ConsumerId = consumerId;

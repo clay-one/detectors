@@ -7,10 +7,10 @@ using Microsoft.Extensions.Configuration;
 namespace Detectors.Kafka.Controllers
 {
     [Route("kafka/cluster/{clusterId}/topic/{topicId}")]
-    public class TopicController : Controller
+    public class KafkaTopicController : Controller
     {
         private readonly IConfiguration _configuration;
-        public TopicController(IConfiguration configuration)
+        public KafkaTopicController(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -46,9 +46,10 @@ namespace Detectors.Kafka.Controllers
         }
 
         [HttpGet("offsets/total")]
+        [HttpGet("offsets/total.{format}")]
         public IActionResult GetTopicTotalOffset(string clusterId, string topicId)
         {
-            var clusterConfig = _configuration.GetCluster(clusterId);
+            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
             if (clusterConfig == null)
                 return NotFound();
 
@@ -61,7 +62,7 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("offsets/total/rate/{duration?}")]
         public IActionResult GetTopicTotalOffsetRate(string clusterId, string topicId, string duration = "1m")
         {
-            var clusterConfig = _configuration.GetCluster(clusterId);
+            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
             if (clusterConfig == null)
                 return NotFound();
 
