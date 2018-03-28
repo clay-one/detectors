@@ -10,7 +10,7 @@ namespace Detectors.Kafka.Controllers
     public class KafkaClusterController : Controller
     {
         private readonly IConfiguration _configuration;
-        public KafkaClusterController(IConfiguration configuration)
+        public KafkaClusterController(IConfiguration configuration, KafkaClusterConfigCollection clusterConfigCollection)
         {
             _configuration = configuration;
         }
@@ -67,10 +67,15 @@ namespace Detectors.Kafka.Controllers
             using (var producer = clusterConfig.BuildProducer())
             {
                 // Dummy calls to GetMetadata to avoid "Broker transport failure" issue
+                Console.WriteLine(" -----------------------------> Before GetMetadata");
                 producer.GetMetadata();
                 producer.GetMetadata();
+                Console.WriteLine(" -----------------------------> After GetMetadata");
+//                producer.GetMetadata();
                 
-                var groups = producer.ListGroups(TimeSpan.FromSeconds(5));
+                Console.WriteLine(" -----------------------------> Before ListGroups");
+                var groups = producer.ListGroups(TimeSpan.FromSeconds(30));
+                Console.WriteLine(" -----------------------------> After ListGroups");
 
                 var resultObject = groups.Select(g => new
                 {
@@ -79,8 +84,11 @@ namespace Detectors.Kafka.Controllers
                     g.Protocol,
                     g.ProtocolType,
                     MemberCount = g.Members.Count
-                });
-                
+                }).ToList();
+
+
+                Console.WriteLine(" -----------------------------> After ToList");
+
                 return Ok(resultObject);
             }
         }

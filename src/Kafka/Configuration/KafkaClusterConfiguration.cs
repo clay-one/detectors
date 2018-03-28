@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Confluent.Kafka;
 
@@ -17,12 +18,24 @@ namespace Detectors.Kafka.Configuration
 
         public Consumer BuildConsumer(string consumerId)
         {
-            return new Consumer(BuildConfigDictionary(consumerId));
+            var consumer = new Consumer(BuildConfigDictionary(consumerId));
+            consumer.OnLog += (sender, message) =>
+            {
+                Console.WriteLine($"{DateTime.Now:O} - {message.Level} / {message.Facility,-12} : {message.Message}");
+            };
+
+            return consumer;
         }
 
         public Producer BuildProducer()
         {
-            return new Producer(BuildConfigDictionary());
+            var producer = new Producer(BuildConfigDictionary());
+            producer.OnLog += (sender, message) =>
+            {
+                Console.WriteLine($"{DateTime.Now:O} - {message.Level} / {message.Facility,-12} : {message.Message}");
+            };
+            
+            return producer;
         }
         
         private string BuildBrokersString()
@@ -35,6 +48,7 @@ namespace Detectors.Kafka.Configuration
             var result = new Dictionary<string, object>
             {
                 {"bootstrap.servers", BuildBrokersString()},
+                {"debug", "all"}
             };
 
             if (consumerId != null)

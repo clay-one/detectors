@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Detectors.Kafka.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -21,6 +22,8 @@ namespace Root
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<KafkaClusterConfigCollection>();
+            
             services
                 .AddMvc()
                 .AddJsonOptions(json =>
