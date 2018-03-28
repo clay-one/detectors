@@ -17,12 +17,20 @@ namespace Detectors.Kafka.Configuration
         public Producer BuildProducer(string clusterId)
         {
             var config = _configuration.GetKafkaCluster(clusterId);
+            if (config == null)
+                return null;
+
+            config.DebugEnabled = _environment.IsDevelopment();
             return config.BuildProducer();
         }
 
         public Consumer BuildConsumer(string clusterId, string consumerId)
         {
             var config = _configuration.GetKafkaCluster(clusterId);
+            if (config == null)
+                return null;
+
+            config.DebugEnabled = _environment.IsDevelopment();
             return config.BuildConsumer(consumerId);
         }
 

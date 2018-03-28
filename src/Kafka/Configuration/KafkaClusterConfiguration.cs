@@ -7,22 +7,16 @@ namespace Detectors.Kafka.Configuration
 {
     public class KafkaClusterConfiguration
     {
-        public class BrokerConfiguration
-        {
-            public string Host { get; set; }
-            public int Port { get; set; }
-        }
-        
         public string Id { get; set; }
-        public List<BrokerConfiguration> Brokers { get; set; }
+        public List<KafkaClusterBrokerConfig> Brokers { get; set; }
+        public bool DebugEnabled { get; set; }
 
         public Consumer BuildConsumer(string consumerId)
         {
             var consumer = new Consumer(BuildConfigDictionary(consumerId));
-            consumer.OnLog += (sender, message) =>
-            {
-                Console.WriteLine($"{DateTime.Now:O} - {message.Level} / {message.Facility,-12} : {message.Message}");
-            };
+            
+            if (DebugEnabled)
+                consumer.OnLog += LogMessage;
 
             return consumer;
         }
@@ -30,10 +24,9 @@ namespace Detectors.Kafka.Configuration
         public Producer BuildProducer()
         {
             var producer = new Producer(BuildConfigDictionary());
-            producer.OnLog += (sender, message) =>
-            {
-                Console.WriteLine($"{DateTime.Now:O} - {message.Level} / {message.Facility,-12} : {message.Message}");
-            };
+
+            if (DebugEnabled)
+                producer.OnLog += LogMessage;
             
             return producer;
         }
@@ -57,5 +50,9 @@ namespace Detectors.Kafka.Configuration
             return result;
         }
 
+        private static void LogMessage(object sender, LogMessage message)
+        {
+            Console.WriteLine($"{DateTime.Now:O} - {message.Level} / {message.Facility,-12} : {message.Message}");
+        }
     }
 }
