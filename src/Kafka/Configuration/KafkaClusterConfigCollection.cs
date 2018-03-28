@@ -1,4 +1,7 @@
-﻿using Confluent.Kafka;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Confluent.Kafka;
+using Detectors.Kafka.Logic;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 
@@ -8,31 +11,54 @@ namespace Detectors.Kafka.Configuration
     {
         private readonly IConfiguration _configuration;
         private readonly IHostingEnvironment _environment;
+        
         public KafkaClusterConfigCollection(IConfiguration configuration, IHostingEnvironment environment)
         {
             _configuration = configuration;
             _environment = environment;
         }
 
+        public KafkaTopicWrapper BuildTopicWrapper(string clusterId, string topicId)
+        {
+            var config = GetKafkaClusterConfig(clusterId);
+            return config == null ? null : new KafkaTopicWrapper(config, topicId);
+        }
+
+        public KafkaTopicConsumerWrapper BuildTopicConsumerWrapper(string clusterId, string topicId, string consumerId)
+        {
+            var config = GetKafkaClusterConfig(clusterId);
+            return config == null ? null : new KafkaTopicConsumerWrapper(config, topicId, consumerId);
+        }
+        
         public Producer BuildProducer(string clusterId)
         {
-            var config = _configuration.GetKafkaCluster(clusterId);
-            if (config == null)
-                return null;
-
-            config.DebugEnabled = _environment.IsDevelopment();
-            return config.BuildProducer();
+            var config = GetKafkaClusterConfig(clusterId);
+            return config?.BuildProducer();
         }
 
         public Consumer BuildConsumer(string clusterId, string consumerId)
         {
-            var config = _configuration.GetKafkaCluster(clusterId);
-            if (config == null)
-                return null;
-
-            config.DebugEnabled = _environment.IsDevelopment();
-            return config.BuildConsumer(consumerId);
+            var config = GetKafkaClusterConfig(clusterId);
+            return config?.BuildConsumer(consumerId);
         }
 
+        public List<KafkaClusterConfig> GetAllKafkaClusterConfigs()
+        {
+            return _configuration
+                .GetSection("kafka:clusters")
+                .GetChildren()
+                .Select(c => c.Get<KafkaClusterConfig>())
+                .ToList();
+        }
+        
+        public KafkaClusterConfig GetKafkaClusterConfig(string id)
+        {
+            var result = GetAllKafkaClusterConfigs().FirstOrDefault(c => c.Id == id);
+            if (result == null)
+                return null;
+            
+            result.DebugEnabled = _environment.IsDevelopment();
+            return result;
+        }
     }
 }

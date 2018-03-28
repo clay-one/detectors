@@ -12,8 +12,8 @@ namespace Detectors.Kafka.Logic
         protected readonly Lazy<Consumer> Consumer;
         protected readonly Lazy<List<TopicPartitionOffsetError>> Tpos;
         
-        public KafkaTopicConsumerWrapper(KafkaClusterConfiguration configuration, string topicId, string consumerId)
-            : base(configuration, topicId)
+        public KafkaTopicConsumerWrapper(KafkaClusterConfig config, string topicId, string consumerId)
+            : base(config, topicId)
         {
             ConsumerId = consumerId;
             Consumer = new Lazy<Consumer>(LoadConsumer);
@@ -43,11 +43,11 @@ namespace Detectors.Kafka.Logic
 
         private Consumer LoadConsumer()
         {
-            return Configuration.BuildConsumer(ConsumerId);
+            return Config.BuildConsumer(ConsumerId);
         }
         
         private string TotalCommittedRateCalculatorKey => 
-            $"kafka/cluster/{Configuration.Id}topic/{TopicId}/consumer/{ConsumerId}/commit/total";
+            $"kafka/cluster/{Config.Id}topic/{TopicId}/consumer/{ConsumerId}/commit/total";
 
         private List<TopicPartitionOffsetError> LoadTpos()
         {

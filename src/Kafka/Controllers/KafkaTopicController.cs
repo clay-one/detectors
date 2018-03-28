@@ -2,15 +2,14 @@
 using Detectors.Kafka.Configuration;
 using Detectors.Kafka.Logic;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace Detectors.Kafka.Controllers
 {
     [Route("kafka/cluster/{clusterId}/topic/{topicId}")]
     public class KafkaTopicController : Controller
     {
-        private readonly IConfiguration _configuration;
-        public KafkaTopicController(IConfiguration configuration)
+        private readonly KafkaClusterConfigCollection _configuration;
+        public KafkaTopicController(KafkaClusterConfigCollection configuration)
         {
             _configuration = configuration;
         }
@@ -49,12 +48,11 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("offsets/total.{format}")]
         public IActionResult GetTopicTotalOffset(string clusterId, string topicId)
         {
-            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
-            if (clusterConfig == null)
-                return NotFound();
-
-            using (var topic = new KafkaTopicWrapper(clusterConfig, topicId))
+            using (var topic = _configuration.BuildTopicWrapper(clusterId, topicId))
             {
+                if (topic == null)
+                    return NotFound();
+                
                 return Ok($"[{topic.GetTotalMaxOffsets()}]");
             }
         }
@@ -62,16 +60,15 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("offsets/total/rate/{duration?}")]
         public IActionResult GetTopicTotalOffsetRate(string clusterId, string topicId, string duration = "1m")
         {
-            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
-            if (clusterConfig == null)
-                return NotFound();
-
             var durationTimeSpan = DurationStringParser.Parse(duration);
             if (durationTimeSpan <= TimeSpan.Zero)
                 return BadRequest("Invalid time duration specified");
             
-            using (var topic = new KafkaTopicWrapper(clusterConfig, topicId))
+            using (var topic = _configuration.BuildTopicWrapper(clusterId, topicId))
             {
+                if (topic == null)
+                    return NotFound();
+                
                 // Calculate the max offsets to add a sample
                 topic.GetTotalMaxOffsets();
 

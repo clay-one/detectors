@@ -4,15 +4,14 @@ using System.Threading.Tasks;
 using Detectors.Kafka.Configuration;
 using Detectors.Kafka.Logic;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace Detectors.Kafka.Controllers
 {
     [Route("kafka/cluster/{clusterId}/topic/{topicId}/consumer/{consumerId}")]
     public class KafkaTopicConsumerController : Controller
     {
-        private readonly IConfiguration _configuration;
-        public KafkaTopicConsumerController(IConfiguration configuration)
+        private readonly KafkaClusterConfigCollection _configuration;
+        public KafkaTopicConsumerController(KafkaClusterConfigCollection configuration)
         {
             _configuration = configuration;
         }
@@ -26,12 +25,11 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("lag/total")]
         public IActionResult GetConsumerTotalLag(string clusterId, string topicId, string consumerId)
         {
-            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
-            if (clusterConfig == null)
-                return NotFound();
-
-            using (var topic = new KafkaTopicConsumerWrapper(clusterConfig, topicId, consumerId))
+            using (var topic = _configuration.BuildTopicConsumerWrapper(clusterId, topicId, consumerId))
             {
+                if (topic == null)
+                    return NotFound();
+                
                 var result = Task.WhenAll(
                         Task.Run(() => topic.GetTotalMaxOffsets()),
                         Task.Run(() => -topic.GetTotalCommitted())
@@ -51,12 +49,11 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("commit/total")]
         public IActionResult GetConsumerTotalCommit(string clusterId, string topicId, string consumerId)
         {
-            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
-            if (clusterConfig == null)
-                return NotFound();
-
-            using (var topic = new KafkaTopicConsumerWrapper(clusterConfig, topicId, consumerId))
+            using (var topic = _configuration.BuildTopicConsumerWrapper(clusterId, topicId, consumerId))
             {
+                if (topic == null)
+                    return NotFound();
+                
                 return Ok($"[{topic.GetTotalCommitted()}]");
             }
         }
@@ -65,16 +62,15 @@ namespace Detectors.Kafka.Controllers
         public IActionResult GetTopicTotalOffsetRate(string clusterId, string topicId, string consumerId, 
             string duration = "1m")
         {
-            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
-            if (clusterConfig == null)
-                return NotFound();
-
             var durationTimeSpan = DurationStringParser.Parse(duration);
             if (durationTimeSpan <= TimeSpan.Zero)
                 return BadRequest("Invalid time duration specified");
             
-            using (var topic = new KafkaTopicConsumerWrapper(clusterConfig, topicId, consumerId))
+            using (var topic = _configuration.BuildTopicConsumerWrapper(clusterId, topicId, consumerId))
             {
+                if (topic == null)
+                    return NotFound();
+                
                 // Calculate the committed value to add a sample
                 topic.GetTotalCommitted();
 

@@ -7,15 +7,15 @@ namespace Detectors.Kafka.Logic
 {
     public class KafkaTopicWrapper : IDisposable
     {
-        protected readonly KafkaClusterConfiguration Configuration;
+        protected readonly KafkaClusterConfig Config;
         protected readonly string TopicId;
         
         protected readonly Lazy<TopicMetadata> TopicMetadata;
         protected readonly Lazy<Producer> Producer;
 
-        public KafkaTopicWrapper(KafkaClusterConfiguration configuration, string topicId)
+        public KafkaTopicWrapper(KafkaClusterConfig config, string topicId)
         {
-            Configuration = configuration;
+            Config = config;
             TopicId = topicId;
 
             Producer = new Lazy<Producer>(LoadProducer);
@@ -53,7 +53,7 @@ namespace Detectors.Kafka.Logic
 
         private Producer LoadProducer()
         {
-            return Configuration.BuildProducer();
+            return Config.BuildProducer();
         }
 
         private TopicMetadata LoadTopicMetadata()
@@ -66,7 +66,7 @@ namespace Detectors.Kafka.Logic
         }
         
         private string TotalMaxOffsetsRateCalculatorKey => 
-            $"kafka/cluster/{Configuration.Id}topic/{TopicId}/offsets/total";
+            $"kafka/cluster/{Config.Id}topic/{TopicId}/offsets/total";
 
     }
 }
