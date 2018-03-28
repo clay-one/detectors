@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Confluent.Kafka;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 
 namespace Detectors.Kafka.Configuration
@@ -13,6 +14,17 @@ namespace Detectors.Kafka.Configuration
             _environment = environment;
         }
 
-        
+        public Producer BuildProducer(string clusterId)
+        {
+            var config = _configuration.GetKafkaCluster(clusterId);
+            return config.BuildProducer();
+        }
+
+        public Consumer BuildConsumer(string clusterId, string consumerId)
+        {
+            var config = _configuration.GetKafkaCluster(clusterId);
+            return config.BuildConsumer(consumerId);
+        }
+
     }
 }

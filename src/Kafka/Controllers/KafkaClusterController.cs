@@ -2,15 +2,14 @@
 using System.Linq;
 using Detectors.Kafka.Configuration;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace Detectors.Kafka.Controllers
 {
     [Route("kafka/cluster/{clusterId}")]
     public class KafkaClusterController : Controller
     {
-        private readonly IConfiguration _configuration;
-        public KafkaClusterController(IConfiguration configuration, KafkaClusterConfigCollection clusterConfigCollection)
+        private readonly KafkaClusterConfigCollection _configuration;
+        public KafkaClusterController(KafkaClusterConfigCollection configuration)
         {
             _configuration = configuration;
         }
@@ -25,13 +24,12 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("metadata.{format}")]
         public IActionResult GetClusterMetadata(string clusterId)
         {
-            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
-            if (clusterConfig == null)
-                return NotFound();
-
-            using (var producer = clusterConfig.BuildProducer())
+            using (var producer = _configuration.BuildProducer(clusterId))
             {
-                var md = producer.GetMetadata(true, null, TimeSpan.FromSeconds(5));
+                if (producer == null)
+                    return NotFound();
+
+                var md = producer.GetMetadata(true, null, TimeSpan.FromSeconds(10));
                 return Ok(md);
             }
         }
@@ -40,18 +38,17 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("topics.{format}")]
         public IActionResult GetTopicList(string clusterId)
         {
-            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
-            if (clusterConfig == null)
-                return NotFound();
-
-            using (var producer = clusterConfig.BuildProducer())
+            using (var producer = _configuration.BuildProducer(clusterId))
             {
-                var md = producer.GetMetadata(true, null, TimeSpan.FromSeconds(5));
+                if (producer == null)
+                    return NotFound();
+                
+                var md = producer.GetMetadata(true, null, TimeSpan.FromSeconds(10));
                 var resultObject = md.Topics.Select(t => new
                 {
                     t.Topic,
                     PartitionCount = t.Partitions.Count
-                });
+                }).ToList();
                 return Ok(resultObject);
             }
         }
@@ -60,23 +57,16 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("groups.{format}")]
         public IActionResult GetGroupList(string clusterId)
         {
-            var clusterConfig = _configuration.GetKafkaCluster(clusterId);
-            if (clusterConfig == null)
-                return NotFound();
-
-            using (var producer = clusterConfig.BuildProducer())
+            using (var producer = _configuration.BuildProducer(clusterId))
             {
-                // Dummy calls to GetMetadata to avoid "Broker transport failure" issue
-                Console.WriteLine(" -----------------------------> Before GetMetadata");
-                producer.GetMetadata();
-                producer.GetMetadata();
-                Console.WriteLine(" -----------------------------> After GetMetadata");
-//                producer.GetMetadata();
-                
-                Console.WriteLine(" -----------------------------> Before ListGroups");
-                var groups = producer.ListGroups(TimeSpan.FromSeconds(30));
-                Console.WriteLine(" -----------------------------> After ListGroups");
+                if (producer == null)
+                    return NotFound();
 
+                // Dummy calls to GetMetadata to avoid "Broker transport failure" issue
+                producer.GetMetadata();
+                producer.GetMetadata();
+                
+                var groups = producer.ListGroups(TimeSpan.FromSeconds(10));
                 var resultObject = groups.Select(g => new
                 {
                     g.Group,
@@ -85,9 +75,6 @@ namespace Detectors.Kafka.Controllers
                     g.ProtocolType,
                     MemberCount = g.Members.Count
                 }).ToList();
-
-
-                Console.WriteLine(" -----------------------------> After ToList");
 
                 return Ok(resultObject);
             }
