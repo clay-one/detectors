@@ -9,6 +9,7 @@ namespace Root.Controllers
     public class BatchController : Controller
     {
         [HttpPost("batch")]
+        [HttpPost("batch.{format}")]
         public async Task<IActionResult> RunBatch([FromBody] RunBatchRequest request)
         {
             var tasks = request.Requests.AsParallel().Select(async (r, i) =>

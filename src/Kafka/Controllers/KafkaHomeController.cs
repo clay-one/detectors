@@ -20,6 +20,7 @@ namespace Detectors.Kafka.Controllers
         }
         
         [HttpGet("clusters")]
+        [HttpGet("clusters.{format}")]
         public IActionResult GetClusterList()
         {
             return Ok(_configuration.GetAllKafkaClusterConfigs().Select(c => new {c.Id}));

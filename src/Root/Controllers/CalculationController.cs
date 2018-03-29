@@ -12,6 +12,7 @@ namespace Root.Controllers
         private static readonly Regex NumberExpression = new Regex(@"\d+(\.\d*)?");
         
         [HttpPost("calculate/sum")]
+        [HttpPost("calculate/sum.{format}")]
         public async Task<IActionResult> CalculateSum([FromBody] CalculateSumRequest request)
         {
             var tasks = request.Requests.AsParallel().Select(async r =>

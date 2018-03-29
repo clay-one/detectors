@@ -6,6 +6,7 @@ namespace Detectors.Kafka.Controllers
     public class KafkaTopicPartitionController : Controller
     {
         [HttpGet("offsets")]
+        [HttpGet("offsets.{format}")]
         public IActionResult GetTopicPartitionOffsets(string clusterId, string topicId, string partitionId)
         {
             return Ok("Not implemented yet.");

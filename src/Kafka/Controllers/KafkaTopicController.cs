@@ -21,24 +21,28 @@ namespace Detectors.Kafka.Controllers
         }
 
         [HttpGet("health")]
+        [HttpGet("health.{format}")]
         public IActionResult GetTopicHealth(string clusterId, string topicId)
         {
             return Ok("Not implemented yet.");
         }
 
         [HttpGet("partitions")]
+        [HttpGet("partitions.{format}")]
         public IActionResult GetTopicPartitionList(string clusterId, string topicId)
         {
             return Ok("Not implemented yet.");
         }
 
         [HttpGet("consumers")]
+        [HttpGet("consumers.{format}")]
         public IActionResult GetTopicConsumerList(string clusterId, string topicId)
         {
             return Ok("Not implemented yet.");
         }
 
         [HttpGet("offsets")]
+        [HttpGet("offsets.{format}")]
         public IActionResult GetTopicOffsets(string clusterId, string topicId)
         {
             return Ok("Not implemented yet.");
@@ -58,6 +62,8 @@ namespace Detectors.Kafka.Controllers
         }
         
         [HttpGet("offsets/total/rate/{duration?}")]
+        [HttpGet("offsets/total/rate/{duration}.{format}")]
+        [HttpGet("offsets/total/rate.{format}")]
         public IActionResult GetTopicTotalOffsetRate(string clusterId, string topicId, string duration = "1m")
         {
             var durationTimeSpan = DurationStringParser.Parse(duration);

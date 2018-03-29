@@ -17,12 +17,14 @@ namespace Detectors.Kafka.Controllers
         }
 
         [HttpGet("lag/details")]
+        [HttpGet("lag/details.{format}")]
         public IActionResult GetConsumerLagDetails(string clusterId, string topicId, string consumerId)
         {
             return Ok("Not implemented yet.");
         }
         
         [HttpGet("lag/total")]
+        [HttpGet("lag/total.{format}")]
         public IActionResult GetConsumerTotalLag(string clusterId, string topicId, string consumerId)
         {
             using (var topic = _configuration.BuildTopicConsumerWrapper(clusterId, topicId, consumerId))
@@ -41,12 +43,14 @@ namespace Detectors.Kafka.Controllers
         }
         
         [HttpGet("commit/details")]
+        [HttpGet("commit/details.{format}")]
         public IActionResult GetConsumerCommitDetails(string clusterId, string topicId, string consumerId)
         {
             return Ok("Not implemented yet.");
         }
         
         [HttpGet("commit/total")]
+        [HttpGet("commit/total.{format}")]
         public IActionResult GetConsumerTotalCommit(string clusterId, string topicId, string consumerId)
         {
             using (var topic = _configuration.BuildTopicConsumerWrapper(clusterId, topicId, consumerId))
@@ -59,6 +63,8 @@ namespace Detectors.Kafka.Controllers
         }
 
         [HttpGet("commit/total/rate/{duration?}")]
+        [HttpGet("commit/total/rate/{duration}.{format}")]
+        [HttpGet("commit/total/rate.{format}")]
         public IActionResult GetTopicTotalOffsetRate(string clusterId, string topicId, string consumerId, 
             string duration = "1m")
         {
