@@ -15,7 +15,7 @@ namespace Detectors.Redis.Controllers
 
         [HttpGet("keys/{keyPattern}")]
         [HttpGet("keys/{keyPattern}.{format}")]
-        public IActionResult GetKeys(string connectionId, int dbId, string keyPattern)
+        public IActionResult GetKeys(string connectionId, string keyPattern, int dbId = -1)
         {
             return Ok("Not implemented yet.");
         }
