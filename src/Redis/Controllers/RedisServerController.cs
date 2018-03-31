@@ -1,4 +1,5 @@
-﻿using Detectors.Redis.Configuration;
+﻿using System.Linq;
+using Detectors.Redis.Configuration;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Detectors.Redis.Controllers
@@ -13,6 +14,7 @@ namespace Detectors.Redis.Controllers
         }
 
         [HttpGet("ping")]
+        [HttpGet("ping.{format}")]
         public IActionResult GetPingResponse(string connectionId)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
@@ -58,7 +60,25 @@ namespace Detectors.Redis.Controllers
         [HttpGet("info.{format}")]
         public IActionResult GetInfo(string connectionId, string section = null)
         {
-            return Ok("Not implemented yet.");
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                if (redis == null)
+                    return NotFound();
+
+                var endpoint = redis.GetEndPoints().FirstOrDefault();
+                if (endpoint == null)
+                    return NotFound();
+
+                var info = redis.GetServer(endpoint).Info(section);
+                var result = info.SelectMany(g => g.Select(gg => new
+                {
+                    Group = g.Key,
+                    gg.Key,
+                    gg.Value
+                })).ToList();
+                
+                return Ok(result);
+            }
         }
 
         [HttpGet("lastsave")]

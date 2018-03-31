@@ -8,6 +8,7 @@ namespace Detectors.Redis.Configuration
     {
         public string Id { get; set; }
         public List<string> EndPoints { get; set; }
+        public bool? AllowAdmin { get; set; }
         public int? ConnectRetry { get; set; }
         public int? ConnectTimeout { get; set; }
         public int? DefaultDatabase { get; set; }
@@ -25,6 +26,9 @@ namespace Detectors.Redis.Configuration
                 foreach (var ep in EndPoints.DefaultIfEmpty())
                     result.EndPoints.Add(ep);
 
+            if (AllowAdmin.HasValue)
+                result.AllowAdmin = AllowAdmin.Value;
+            
             if (ConnectRetry.HasValue)
                 result.ConnectRetry = ConnectRetry.Value;
 

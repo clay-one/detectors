@@ -29,6 +29,7 @@
       {
         "id": "connection-two",
         "endPoints": ["server-a:1234", "server-b:5678"],
+        "allowAdmin": true,
         "connectRetry": 5,
         "connectTimeout": 30,
         "defaultDatabase": 5
