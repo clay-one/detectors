@@ -1,14 +1,13 @@
 ﻿using Detectors.Redis.Configuration;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace Detectors.Redis.Controllers
 {
     [Route("redis/connection/{connectionId}")]
     public class RedisServerController : Controller
     {
-        private readonly IConfiguration _configuration;
-        public RedisServerController(IConfiguration configuration)
+        private readonly RedisConnectionConfigCollection _configuration;
+        public RedisServerController(RedisConnectionConfigCollection configuration)
         {
             _configuration = configuration;
         }
@@ -16,12 +15,11 @@ namespace Detectors.Redis.Controllers
         [HttpGet("ping")]
         public IActionResult GetPingResponse(string connectionId)
         {
-            var connectionConfig = _configuration.GetRedisConnection(connectionId);
-            if (connectionConfig == null)
-                return NotFound();
-
-            using (var redis = connectionConfig.BuildMultiplexer())
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
+                if (redis == null)
+                    return NotFound();
+                
                 var response = redis.GetDatabase().Ping();
                 return Ok(response.TotalSeconds);
             }

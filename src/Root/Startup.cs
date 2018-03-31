@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Detectors.Kafka.Configuration;
+using Detectors.Redis.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -23,6 +24,7 @@ namespace Root
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<KafkaClusterConfigCollection>();
+            services.AddSingleton<RedisConnectionConfigCollection>();
             
             services
                 .AddMvc()

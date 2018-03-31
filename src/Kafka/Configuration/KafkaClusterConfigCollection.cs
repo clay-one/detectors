@@ -51,9 +51,9 @@ namespace Detectors.Kafka.Configuration
                 .ToList();
         }
         
-        public KafkaClusterConfig GetKafkaClusterConfig(string id)
+        public KafkaClusterConfig GetKafkaClusterConfig(string clusterId)
         {
-            var result = GetAllKafkaClusterConfigs().FirstOrDefault(c => c.Id == id);
+            var result = GetAllKafkaClusterConfigs().FirstOrDefault(c => c.Id == clusterId);
             if (result == null)
                 return null;
             
