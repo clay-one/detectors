@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Detectors.Redis.Configuration;
+using Detectors.Redis.Util;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Detectors.Redis.Controllers
@@ -62,14 +63,11 @@ namespace Detectors.Redis.Controllers
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
-                if (redis == null)
+                var server = redis.GetFirstServer();
+                if (server == null)
                     return NotFound();
 
-                var endpoint = redis.GetEndPoints().FirstOrDefault();
-                if (endpoint == null)
-                    return NotFound();
-
-                var info = redis.GetServer(endpoint).Info(section);
+                var info = server.Info(section);
                 var result = info.SelectMany(g => g.Select(gg => new
                 {
                     Group = g.Key,
