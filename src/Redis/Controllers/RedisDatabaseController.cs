@@ -18,7 +18,22 @@ namespace Detectors.Redis.Controllers
 
         [HttpGet("keys")]
         [HttpGet("keys.{format}")]
-        public IActionResult GetKeys(string connectionId, string pattern = null, int count = 10, long cursor = 0L, 
+        public IActionResult GetKeys(string connectionId, string pattern = null, int count = int.MaxValue, int dbId = 0)
+        {
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                var server = redis.GetFirstServer();
+                if (server == null)
+                    return NotFound();
+
+                var keys = server.Keys(dbId, pattern ?? default(RedisValue), count);
+                return Ok(keys.Select(k => k.ToString()).ToList());
+            }
+        }
+        
+        [HttpGet("scan-keys")]
+        [HttpGet("scan-keys.{format}")]
+        public IActionResult ScanKeys(string connectionId, string pattern = null, int count = 10, long cursor = 0L, 
             int dbId = 0)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
