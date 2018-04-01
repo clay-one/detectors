@@ -44,5 +44,20 @@ namespace Detectors.Redis.Controllers
             }
         }
 
+        [HttpGet("size")]
+        [HttpGet("size.{format}")]
+        public IActionResult GetSize(string connectionId, int dbId = 0)
+        {
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                var server = redis.GetFirstServer();
+                if (server == null)
+                    return NotFound();
+
+                var response = server.DatabaseSize(dbId);
+                return Ok(response.ToString());
+            }
+        }
+
     }
 }

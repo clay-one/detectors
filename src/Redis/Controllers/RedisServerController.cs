@@ -20,10 +20,11 @@ namespace Detectors.Redis.Controllers
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
-                if (redis == null)
+                var server = redis.GetFirstServer();
+                if (server == null)
                     return NotFound();
-                
-                var response = redis.GetDatabase().Ping();
+
+                var response = server.Ping();
                 return Ok(response.TotalSeconds);
             }
         }
@@ -32,28 +33,74 @@ namespace Detectors.Redis.Controllers
         [HttpGet("echo/{message}.{format}")]
         public IActionResult GetEchoResponse(string connectionId, string message)
         {
-            return Ok("Not implemented yet.");
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                var server = redis.GetFirstServer();
+                if (server == null)
+                    return NotFound();
+
+                var response = server.Echo(message);
+                return Ok(response.ToString());
+            }
         }
 
         [HttpGet("client-list")]
         [HttpGet("client-list.{format}")]
         public IActionResult GetClientList(string connectionId)
         {
-            return Ok("Not implemented yet.");
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                var server = redis.GetFirstServer();
+                if (server == null)
+                    return NotFound();
+
+                var clientList = server.ClientList();
+                var result = clientList.Select(c => new
+                {
+                    c.Id,
+                    c.Name,
+                    Address = c.Address.ToString(),
+                    Type = c.ClientType.ToString(),
+                    c.AgeSeconds,
+                    c.IdleSeconds,
+                    Flags = c.FlagsRaw,
+                    c.LastCommand,
+                    SubCount = c.SubscriptionCount,
+                    TxCmdLength = c.TransactionCommandLength
+                }).ToList();
+                return Ok(result);
+            }
+        }
+        
+        [HttpGet("raw-client-list")]
+        [HttpGet("raw-client-list.{format}")]
+        public IActionResult GetRawClientList(string connectionId)
+        {
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                var server = redis.GetFirstServer();
+                if (server == null)
+                    return NotFound();
+
+                var clientList = server.ClientList();
+                return Ok(clientList.Select(c => c.Raw).ToList());
+            }
         }
 
-        [HttpGet("config/{pattern}")]
-        [HttpGet("config/{pattern}.{format}")]
-        public IActionResult GetConfig(string connectionId, string pattern)
+        [HttpGet("config")]
+        [HttpGet("config.{format}")]
+        [HttpGet("config/{pattern}.{format?}")]
+        public IActionResult GetConfig(string connectionId, string pattern = null)
         {
-            return Ok("Not implemented yet.");
-        }
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                var server = redis.GetFirstServer();
+                if (server == null)
+                    return NotFound();
 
-        [HttpGet("size")]
-        [HttpGet("size.{format}")]
-        public IActionResult GetSize(string connectionId)
-        {
-            return Ok("Not implemented yet.");
+                var response = string.IsNullOrWhiteSpace(pattern) ? server.ConfigGet() : server.ConfigGet(pattern);
+                return Ok(response);
+            }
         }
 
         [HttpGet("info/{section?}")]
@@ -83,7 +130,31 @@ namespace Detectors.Redis.Controllers
         [HttpGet("lastsave.{format}")]
         public IActionResult GetLastSave(string connectionId)
         {
-            return Ok("Not implemented yet.");
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                var server = redis.GetFirstServer();
+                if (server == null)
+                    return NotFound();
+
+                var response = server.LastSave();
+                return Ok(response.ToString("O"));
+            }
+        }
+
+        [HttpGet("lastsave/elapsed")]
+        [HttpGet("lastsave/elapsed.{format}")]
+        public IActionResult GetElapsedSinceLastSave(string connectionId)
+        {
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                var server = redis.GetFirstServer();
+                if (server == null)
+                    return NotFound();
+
+                var lastSave = server.LastSave();
+                var time = server.Time();
+                return Ok((time - lastSave).TotalSeconds);
+            }
         }
 
         [HttpGet("slowlog/{count?}")]
@@ -91,14 +162,38 @@ namespace Detectors.Redis.Controllers
         [HttpGet("slowlog.{format}")]
         public IActionResult GetSlowLog(string connectionId, int count = 50)
         {
-            return Ok("Not implemented yet.");
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                var server = redis.GetFirstServer();
+                if (server == null)
+                    return NotFound();
+
+                var slowLog = server.SlowlogGet(count);
+                var result = slowLog.Select(l => new
+                {
+                    l.UniqueId,
+                    Time = l.Time.ToString("O"),
+                    Duration = l.Duration.TotalSeconds,
+                    Command = string.Join(" ", l.Arguments.Select(a => a.ToString())).Truncate(40)
+                }).ToList();
+                
+                return Ok(result);
+            }
         }
 
         [HttpGet("time")]
         [HttpGet("time.{format}")]
         public IActionResult GetTime(string connectionId)
         {
-            return Ok("Not implemented yet.");
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                var server = redis.GetFirstServer();
+                if (server == null)
+                    return NotFound();
+
+                var response = server.Time();
+                return Ok(response.ToString("O"));
+            }
         }
     }
 }
