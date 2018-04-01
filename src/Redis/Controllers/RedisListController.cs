@@ -58,37 +58,28 @@ namespace Detectors.Redis.Controllers
         
         [HttpGet("range")]
         [HttpGet("range.{format}")]
-        [HttpGet("range/from/{from}.{format?}")]
-        [HttpGet("range/to/{to}.{format?}")]
-        [HttpGet("range/from/{from}/to/{to}.{format?}")]
-        public IActionResult GetRange(string connectionId, string key, long from = 0L, long to = -1L, int dbId = -1)
+        public IActionResult GetRange(string connectionId, string key, long start = 0L, long stop = -1L, int dbId = -1)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
                 if (redis == null)
                     return NotFound();
 
-                var result = redis.GetDatabase(dbId).ListRange(key, from, to);
+                var result = redis.GetDatabase(dbId).ListRange(key, start, stop);
                 return Ok(result.Select(v => (byte[])v));
             }
         }
         
         [HttpGet("range/string")]
         [HttpGet("range/string{.format}")]
-        [HttpGet("range/from/{from}/string")]
-        [HttpGet("range/from/{from}/string.{format}")]
-        [HttpGet("range/to/{to}/string")]
-        [HttpGet("range/to/{to}/string.{format}")]
-        [HttpGet("range/from/{from}/to/{to}/string")]
-        [HttpGet("range/from/{from}/to/{to}/string.{format}")]
-        public IActionResult GetRangeString(string connectionId, string key, long from = 0L, long to = -1L, int dbId = -1)
+        public IActionResult GetRangeString(string connectionId, string key, long start = 0L, long stop = -1L, int dbId = -1)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
                 if (redis == null)
                     return NotFound();
 
-                var result = redis.GetDatabase(dbId).ListRange(key, from, to);
+                var result = redis.GetDatabase(dbId).ListRange(key, start, stop);
                 return Ok(result.Select(v => (string)v));
             }
         }

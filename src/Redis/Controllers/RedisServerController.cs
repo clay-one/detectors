@@ -90,7 +90,6 @@ namespace Detectors.Redis.Controllers
 
         [HttpGet("config")]
         [HttpGet("config.{format}")]
-        [HttpGet("config/{pattern}.{format?}")]
         public IActionResult GetConfig(string connectionId, string pattern = null, string hostAndPort = null)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
@@ -158,10 +157,9 @@ namespace Detectors.Redis.Controllers
             }
         }
 
-        [HttpGet("slowlog/{count?}")]
-        [HttpGet("slowlog/{count}.{format}")]
+        [HttpGet("slowlog")]
         [HttpGet("slowlog.{format}")]
-        public IActionResult GetSlowLog(string connectionId, int count = 50, string hostAndPort = null)
+        public IActionResult GetSlowLog(string connectionId, int count = 10, string hostAndPort = null)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {

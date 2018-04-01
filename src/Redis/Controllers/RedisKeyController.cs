@@ -121,7 +121,7 @@ namespace Detectors.Redis.Controllers
                     return NotFound();
 
                 var result = redis.GetDatabase(dbId).KeyTimeToLive(key);
-                return Ok(result.HasValue ? result.Value.ToString() : "(null)");
+                return Ok(result?.TotalSeconds ?? -1d);
             }
         }
 
