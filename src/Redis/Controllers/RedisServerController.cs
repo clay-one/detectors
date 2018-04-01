@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Detectors.Redis.Controllers
 {
     [Route("redis/connection/{connectionId}")]
+    [Route("redis/connection/{connectionId}/server/{hostAndPort}")]
     public class RedisServerController : Controller
     {
         private readonly RedisConnectionConfigCollection _configuration;
@@ -16,11 +17,11 @@ namespace Detectors.Redis.Controllers
 
         [HttpGet("ping")]
         [HttpGet("ping.{format}")]
-        public IActionResult GetPingResponse(string connectionId)
+        public IActionResult GetPingResponse(string connectionId, string hostAndPort = null)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
-                var server = redis.GetFirstServer();
+                var server = redis.GetServerOrDefault(hostAndPort);
                 if (server == null)
                     return NotFound();
 
@@ -31,11 +32,11 @@ namespace Detectors.Redis.Controllers
 
         [HttpGet("echo/{message}")]
         [HttpGet("echo/{message}.{format}")]
-        public IActionResult GetEchoResponse(string connectionId, string message)
+        public IActionResult GetEchoResponse(string connectionId, string message, string hostAndPort = null)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
-                var server = redis.GetFirstServer();
+                var server = redis.GetServerOrDefault(hostAndPort);
                 if (server == null)
                     return NotFound();
 
@@ -46,11 +47,11 @@ namespace Detectors.Redis.Controllers
 
         [HttpGet("client-list")]
         [HttpGet("client-list.{format}")]
-        public IActionResult GetClientList(string connectionId)
+        public IActionResult GetClientList(string connectionId, string hostAndPort = null)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
-                var server = redis.GetFirstServer();
+                var server = redis.GetServerOrDefault(hostAndPort);
                 if (server == null)
                     return NotFound();
 
@@ -74,11 +75,11 @@ namespace Detectors.Redis.Controllers
         
         [HttpGet("raw-client-list")]
         [HttpGet("raw-client-list.{format}")]
-        public IActionResult GetRawClientList(string connectionId)
+        public IActionResult GetRawClientList(string connectionId, string hostAndPort = null)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
-                var server = redis.GetFirstServer();
+                var server = redis.GetServerOrDefault(hostAndPort);
                 if (server == null)
                     return NotFound();
 
@@ -90,11 +91,11 @@ namespace Detectors.Redis.Controllers
         [HttpGet("config")]
         [HttpGet("config.{format}")]
         [HttpGet("config/{pattern}.{format?}")]
-        public IActionResult GetConfig(string connectionId, string pattern = null)
+        public IActionResult GetConfig(string connectionId, string pattern = null, string hostAndPort = null)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
-                var server = redis.GetFirstServer();
+                var server = redis.GetServerOrDefault(hostAndPort);
                 if (server == null)
                     return NotFound();
 
@@ -106,11 +107,11 @@ namespace Detectors.Redis.Controllers
         [HttpGet("info/{section?}")]
         [HttpGet("info/{section}.{format}")]
         [HttpGet("info.{format}")]
-        public IActionResult GetInfo(string connectionId, string section = null)
+        public IActionResult GetInfo(string connectionId, string section = null, string hostAndPort = null)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
-                var server = redis.GetFirstServer();
+                var server = redis.GetServerOrDefault(hostAndPort);
                 if (server == null)
                     return NotFound();
 
@@ -128,11 +129,11 @@ namespace Detectors.Redis.Controllers
 
         [HttpGet("lastsave")]
         [HttpGet("lastsave.{format}")]
-        public IActionResult GetLastSave(string connectionId)
+        public IActionResult GetLastSave(string connectionId, string hostAndPort = null)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
-                var server = redis.GetFirstServer();
+                var server = redis.GetServerOrDefault(hostAndPort);
                 if (server == null)
                     return NotFound();
 
@@ -143,11 +144,11 @@ namespace Detectors.Redis.Controllers
 
         [HttpGet("lastsave/elapsed")]
         [HttpGet("lastsave/elapsed.{format}")]
-        public IActionResult GetElapsedSinceLastSave(string connectionId)
+        public IActionResult GetElapsedSinceLastSave(string connectionId, string hostAndPort = null)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
-                var server = redis.GetFirstServer();
+                var server = redis.GetServerOrDefault(hostAndPort);
                 if (server == null)
                     return NotFound();
 
@@ -160,11 +161,11 @@ namespace Detectors.Redis.Controllers
         [HttpGet("slowlog/{count?}")]
         [HttpGet("slowlog/{count}.{format}")]
         [HttpGet("slowlog.{format}")]
-        public IActionResult GetSlowLog(string connectionId, int count = 50)
+        public IActionResult GetSlowLog(string connectionId, int count = 50, string hostAndPort = null)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
-                var server = redis.GetFirstServer();
+                var server = redis.GetServerOrDefault(hostAndPort);
                 if (server == null)
                     return NotFound();
 
@@ -183,11 +184,11 @@ namespace Detectors.Redis.Controllers
 
         [HttpGet("time")]
         [HttpGet("time.{format}")]
-        public IActionResult GetTime(string connectionId)
+        public IActionResult GetTime(string connectionId, string hostAndPort = null)
         {
             using (var redis = _configuration.BuildMultiplexer(connectionId))
             {
-                var server = redis.GetFirstServer();
+                var server = redis.GetServerOrDefault(hostAndPort);
                 if (server == null)
                     return NotFound();
 

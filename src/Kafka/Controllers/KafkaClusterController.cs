@@ -33,6 +33,26 @@ namespace Detectors.Kafka.Controllers
                 return Ok(md);
             }
         }
+
+        [HttpGet("brokers")]
+        [HttpGet("brokers.{format}")]
+        public IActionResult GetBrokers(string clusterId)
+        {
+            using (var producer = _configuration.BuildProducer(clusterId))
+            {
+                if (producer == null)
+                    return NotFound();
+
+                var md = producer.GetMetadata(true, null, TimeSpan.FromSeconds(10));
+                var result = md.Brokers.Select(b => new
+                {
+                    b.BrokerId,
+                    b.Host,
+                    b.Port
+                }).ToList();
+                return Ok(result);
+            }
+        }
         
         [HttpGet("topics")]
         [HttpGet("topics.{format}")]

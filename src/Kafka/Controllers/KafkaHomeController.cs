@@ -16,7 +16,7 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("")]
         public IActionResult GetHomepage()
         {
-            return Redirect("/api/kafka/clusters");
+            return Redirect("kafka/clusters");
         }
         
         [HttpGet("clusters")]
