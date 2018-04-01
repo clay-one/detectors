@@ -1,4 +1,6 @@
-﻿using Detectors.Redis.Configuration;
+﻿using System.Linq;
+using Detectors.Redis.Configuration;
+using Detectors.Redis.Util;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Detectors.Redis.Controllers
@@ -15,9 +17,17 @@ namespace Detectors.Redis.Controllers
 
         [HttpGet("keys/{keyPattern}")]
         [HttpGet("keys/{keyPattern}.{format}")]
-        public IActionResult GetKeys(string connectionId, string keyPattern, int dbId = -1)
+        public IActionResult GetKeys(string connectionId, string keyPattern, int dbId = 0)
         {
-            return Ok("Not implemented yet.");
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                var server = redis.GetFirstServer();
+                if (server == null)
+                    return NotFound();
+
+                var keys = server.Keys(dbId, keyPattern);
+                return Ok(keys.Select(k => k.ToString()).ToList());
+            }
         }
 
         [HttpGet("random-key")]
