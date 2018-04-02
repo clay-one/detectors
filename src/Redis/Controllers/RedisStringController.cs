@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Detectors.Redis.Configuration;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Detectors.Redis.Controllers
 {
@@ -6,6 +7,12 @@ namespace Detectors.Redis.Controllers
     [Route("redis/connection/{connectionId}/string/{key}")]
     public class RedisStringController : Controller
     {
+        private readonly RedisConnectionConfigCollection _configuration;
+        public RedisStringController(RedisConnectionConfigCollection configuration)
+        {
+            _configuration = configuration;
+        }
+
         [HttpGet("value")]
         [HttpGet("value.{format}")]
         public IActionResult GetValue(string connectionId, string key, int dbId = -1)
