@@ -31,13 +31,11 @@ namespace Detectors.Kafka.Controllers
             {
                 if (topic == null)
                     return NotFound();
-                
-                var result = Task.WhenAll(
-                        Task.Run(() => topic.GetTotalMaxOffsets()),
-                        Task.Run(() => -topic.GetTotalCommitted())
-                    )
-                    .GetAwaiter().GetResult().Sum();
 
+                var totalCommit = topic.GetTotalCommitted();
+                var totalMaxOffets = topic.GetTotalMaxOffsets();
+
+                var result = totalMaxOffets - totalCommit;
                 return Ok($"[{result}]");
             }
         }
