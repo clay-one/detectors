@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Detectors.Kafka.Configuration;
 using Detectors.Kafka.Logic;
 using Microsoft.AspNetCore.Mvc;

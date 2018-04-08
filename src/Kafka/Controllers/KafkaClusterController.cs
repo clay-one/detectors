@@ -73,6 +73,29 @@ namespace Detectors.Kafka.Controllers
             }
         }
         
+        [HttpGet("topic-partitions")]
+        [HttpGet("topic-partitions.{format}")]
+        public IActionResult GetTopicPartitionList(string clusterId)
+        {
+            using (var producer = _configuration.BuildProducer(clusterId))
+            {
+                if (producer == null)
+                    return NotFound();
+
+                var metadata = producer.GetMetadata();
+                var result = metadata.Topics.SelectMany(t => t.Partitions.Select(p => new
+                {
+                    t.Topic,
+                    p.PartitionId,
+                    p.Leader,
+                    Replicas = string.Join(",", p.Replicas.Select(r => r.ToString())),
+                    ISRs = string.Join(",", p.InSyncReplicas.Select(isr => isr.ToString())),
+                })).ToList();
+
+                return Ok(result);
+            }
+        }
+        
         [HttpGet("groups")]
         [HttpGet("groups.{format}")]
         public IActionResult GetGroupList(string clusterId)

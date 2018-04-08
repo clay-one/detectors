@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Detectors.Kafka.Configuration;
 using Detectors.Kafka.Logic;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,21 @@ namespace Detectors.Kafka.Controllers
         [HttpGet("partitions.{format}")]
         public IActionResult GetTopicPartitionList(string clusterId, string topicId)
         {
-            return Ok("Not implemented yet.");
+            using (var topic = _configuration.BuildTopicWrapper(clusterId, topicId))
+            {
+                if (topic == null)
+                    return NotFound();
+
+                var result = topic.Metadata.Partitions.Select(p => new
+                {
+                    p.PartitionId,
+                    p.Leader,
+                    Replicas = string.Join(",", p.Replicas.Select(r => r.ToString())),
+                    ISRs = string.Join(",", p.InSyncReplicas.Select(isr => isr.ToString())),
+                }).ToList();
+                
+                return Ok(result);
+            }
         }
 
         [HttpGet("consumers")]
