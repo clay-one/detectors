@@ -24,16 +24,33 @@ namespace Detectors.Kafka.Logic
         
         public TopicMetadata Metadata => TopicMetadata.Value;
         
-        public long GetMaxOffset(int partitionId)
+        public long GetLowOffset(int partitionId)
         {
-            return Producer.Value.QueryWatermarkOffsets(new TopicPartition(TopicId, partitionId)).High.Value;
+            var offsets = Producer.Value.QueryWatermarkOffsets(new TopicPartition(TopicId, partitionId));
+
+            if (offsets.Low.IsSpecial)
+                throw new InvalidKafkaResponseException(
+                    $"Returned high offset is special ({offsets.High.Value}) for partition '{partitionId}' on topic '{TopicId}'.");
+            
+            return offsets.Low.Value;
+        }
+        
+        public long GetHighOffset(int partitionId)
+        {
+            var offsets = Producer.Value.QueryWatermarkOffsets(new TopicPartition(TopicId, partitionId));
+
+            if (offsets.High.IsSpecial)
+                throw new InvalidKafkaResponseException(
+                    $"Returned high offset is special ({offsets.High.Value}) for partition '{partitionId}' on topic '{TopicId}'.");
+            
+            return offsets.High.Value;
         }
 
-        public long GetTotalMaxOffsets()
+        public long GetTotalHighOffsets()
         {
             var result = TopicMetadata.Value.Partitions
                 .AsParallel()
-                .Select(p => GetMaxOffset(p.PartitionId))
+                .Select(p => GetHighOffset(p.PartitionId))
                 .Sum();
             
             GetTotalMaxOffsetsRateCalculator().AddSample(result);
@@ -58,15 +75,18 @@ namespace Detectors.Kafka.Logic
 
         private TopicMetadata LoadTopicMetadata()
         {
-            return Producer
-                .Value
+            var result = Producer.Value
                 .GetMetadata(false, TopicId, TimeSpan.FromSeconds(5))
-                .Topics
-                .FirstOrDefault();
+                .Topics.FirstOrDefault();
+            
+            if (result.Error.HasError)
+                throw new InvalidKafkaResponseException($"");
+            
+            return result;
         }
         
         private string TotalMaxOffsetsRateCalculatorKey => 
-            $"kafka/cluster/{Config.Id}topic/{TopicId}/offsets/total";
+            $"kafka/cluster/{Config.Id}/topic/{TopicId}/offsets/total";
 
     }
 }

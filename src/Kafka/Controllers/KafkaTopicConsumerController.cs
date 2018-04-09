@@ -31,7 +31,7 @@ namespace Detectors.Kafka.Controllers
                     return NotFound();
 
                 var totalCommit = topic.GetTotalCommitted();
-                var totalMaxOffets = topic.GetTotalMaxOffsets();
+                var totalMaxOffets = topic.GetTotalHighOffsets();
 
                 var result = totalMaxOffets - totalCommit;
                 return Ok($"[{result}]");

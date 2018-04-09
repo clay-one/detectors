@@ -72,7 +72,7 @@ namespace Detectors.Kafka.Controllers
                 if (topic == null)
                     return NotFound();
                 
-                return Ok($"[{topic.GetTotalMaxOffsets()}]");
+                return Ok($"[{topic.GetTotalHighOffsets()}]");
             }
         }
         
@@ -91,7 +91,7 @@ namespace Detectors.Kafka.Controllers
                     return NotFound();
                 
                 // Calculate the max offsets to add a sample
-                topic.GetTotalMaxOffsets();
+                topic.GetTotalHighOffsets();
 
                 var utcNow = DateTime.UtcNow;
                 var rate = topic
