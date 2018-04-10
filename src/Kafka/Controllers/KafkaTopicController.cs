@@ -72,11 +72,34 @@ namespace Detectors.Kafka.Controllers
                 if (topic == null)
                     return NotFound();
                 
-                return Ok($"[{topic.GetTotalHighOffsets()}]");
+                return Ok(topic.GetTotalHighOffsets());
             }
         }
         
         [HttpGet("offsets/total/rate/{duration?}")]
+        public IActionResult GetTopicTotalOffsetRateLegacy(string clusterId, string topicId, string duration = "1m")
+        {
+            var durationTimeSpan = DurationStringParser.Parse(duration);
+            if (durationTimeSpan <= TimeSpan.Zero)
+                return BadRequest("Invalid time duration specified");
+            
+            using (var topic = _configuration.BuildTopicWrapper(clusterId, topicId))
+            {
+                if (topic == null)
+                    return NotFound();
+                
+                // Calculate the max offsets to add a sample
+                topic.GetTotalHighOffsets();
+
+                var utcNow = DateTime.UtcNow;
+                var rate = topic
+                    .GetTotalMaxOffsetsRateCalculator()
+                    .CalculateRateAverage(utcNow - durationTimeSpan, utcNow);
+            
+                return Ok($"[{rate}]");
+            }
+        }
+        
         [HttpGet("offsets/total/rate/{duration}.{format}")]
         [HttpGet("offsets/total/rate.{format}")]
         public IActionResult GetTopicTotalOffsetRate(string clusterId, string topicId, string duration = "1m")
@@ -98,7 +121,7 @@ namespace Detectors.Kafka.Controllers
                     .GetTotalMaxOffsetsRateCalculator()
                     .CalculateRateAverage(utcNow - durationTimeSpan, utcNow);
             
-                return Ok($"[{rate}]");
+                return Ok(rate);
             }
         }
     }
