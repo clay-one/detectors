@@ -41,9 +41,15 @@ namespace Detectors.Kafka.Configuration
             var result = new Dictionary<string, object>
             {
                 {"bootstrap.servers", BuildBrokersString()},
-                {"debug", "all"}
+                {"client.id", "detectors"},
+                {"enable.auto.commit", "false"},
+                {"offset.store.method", "none"}
+//                {"auto.offset.reset", "smallest"}
             };
 
+            if (DebugEnabled)
+                result["debug"] = "all";
+            
             if (consumerId != null)
                 result["group.id"] = consumerId;
 

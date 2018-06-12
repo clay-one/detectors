@@ -1,11 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Detectors.Kafka.Configuration;
+using Detectors.Kafka.Logic;
 using Detectors.Redis.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Root.Formatters;
 using Root.Pipeline;
@@ -25,6 +27,8 @@ namespace Root
         {
             services.AddSingleton<KafkaClusterConfigCollection>();
             services.AddSingleton<RedisConnectionConfigCollection>();
+
+//            services.AddSingleton<IHostedService, KafkaCommitMonitor>();
             
             services
                 .AddMvc()

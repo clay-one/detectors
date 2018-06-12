@@ -9,7 +9,7 @@ namespace Detectors.Kafka.Logic
     public class KafkaTopicConsumerWrapper : KafkaTopicWrapper
     {
         protected readonly string ConsumerId;
-        protected readonly Lazy<Consumer> Consumer;
+        public readonly Lazy<Consumer> Consumer;
         protected readonly Lazy<List<TopicPartitionOffsetError>> Tpos;
         
         public KafkaTopicConsumerWrapper(KafkaClusterConfig config, string topicId, string consumerId)
