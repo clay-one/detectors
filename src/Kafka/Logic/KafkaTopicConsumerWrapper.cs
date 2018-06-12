@@ -86,7 +86,7 @@ namespace Detectors.Kafka.Logic
                 return GetLowOffset(tpo.Partition);
             }
 
-            throw new InvalidKafkaResponseException($"Cannot understand special offset value of {tpo.ToString()} for ");
+            throw new InvalidKafkaResponseException($"Cannot understand special offset value of {tpo} for ");
         }
     }
 }

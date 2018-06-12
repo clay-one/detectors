@@ -22,21 +22,6 @@ namespace Detectors.Kafka.Controllers
         }
         
         [HttpGet("lag/total")]
-        public IActionResult GetConsumerTotalLagLegacy(string clusterId, string topicId, string consumerId)
-        {
-            using (var topic = _configuration.BuildTopicConsumerWrapper(clusterId, topicId, consumerId))
-            {
-                if (topic == null)
-                    return NotFound();
-
-                var totalCommit = topic.GetTotalCommitted();
-                var totalMaxOffets = topic.GetTotalHighOffsets();
-
-                var result = totalMaxOffets - totalCommit;
-                return Ok($"[{result}]");
-            }
-        }
-        
         [HttpGet("lag/total.{format}")]
         public IActionResult GetConsumerTotalLag(string clusterId, string topicId, string consumerId)
         {
@@ -74,30 +59,6 @@ namespace Detectors.Kafka.Controllers
         }
 
         [HttpGet("commit/total/rate/{duration?}")]
-        public IActionResult GetTopicTotalOffsetRateLegacy(string clusterId, string topicId, string consumerId, 
-            string duration = "1m")
-        {
-            var durationTimeSpan = DurationStringParser.Parse(duration);
-            if (durationTimeSpan <= TimeSpan.Zero)
-                return BadRequest("Invalid time duration specified");
-            
-            using (var topic = _configuration.BuildTopicConsumerWrapper(clusterId, topicId, consumerId))
-            {
-                if (topic == null)
-                    return NotFound();
-                
-                // Calculate the committed value to add a sample
-                topic.GetTotalCommitted();
-
-                var utcNow = DateTime.UtcNow;
-                var rate = topic
-                    .GetTotalCommittedRateCalculator()
-                    .CalculateRateAverage(utcNow - durationTimeSpan, utcNow);
-            
-                return Ok($"[{rate}]");
-            }
-        }
-        
         [HttpGet("commit/total/rate/{duration}.{format}")]
         [HttpGet("commit/total/rate.{format}")]
         public IActionResult GetTopicTotalOffsetRate(string clusterId, string topicId, string consumerId, 
