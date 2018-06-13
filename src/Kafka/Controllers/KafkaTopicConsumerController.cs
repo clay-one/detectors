@@ -38,6 +38,36 @@ namespace Detectors.Kafka.Controllers
             }
         }
         
+        [HttpGet("lag/total/seconds/{duration?}")]
+        [HttpGet("lag/total/seconds/{duration}.{format}")]
+        [HttpGet("lag/total/seconds.{format}")]
+        public IActionResult GetConsumerTotalRelativeLag(string clusterId, string topicId, string consumerId, 
+            string duration = "1m")
+        {
+            var durationTimeSpan = DurationStringParser.Parse(duration);
+            if (durationTimeSpan <= TimeSpan.Zero)
+                return BadRequest("Invalid time duration specified");
+            
+            using (var topic = _configuration.BuildTopicConsumerWrapper(clusterId, topicId, consumerId))
+            {
+                if (topic == null)
+                    return NotFound();
+
+                var totalCommit = topic.GetTotalCommitted();
+                var totalMaxOffets = topic.GetTotalHighOffsets();
+
+                var utcNow = DateTime.UtcNow;
+                var rate = topic
+                    .GetTotalCommittedRateCalculator()
+                    .CalculateRateAverage(utcNow - durationTimeSpan, utcNow);
+            
+                var lag = totalMaxOffets - totalCommit;
+                var result = (Math.Abs(rate) < 0.01 ? 1440 : lag / rate) * 60;
+                
+                return Ok(result);
+            }
+        }
+        
         [HttpGet("commit/details")]
         [HttpGet("commit/details.{format}")]
         public IActionResult GetConsumerCommitDetails(string clusterId, string topicId, string consumerId)

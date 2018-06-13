@@ -28,6 +28,7 @@
                     <a class="dropdown-item" href="#hRedisLists">Lists</a>
                     <a class="dropdown-item" href="#hRedisSets">Sets</a>
                     <a class="dropdown-item" href="#hRedisSortedSets">Sorted Sets</a>
+                    <a class="dropdown-item" href="#hRedisPubSub">Pub/Sub</a>
                 </div>
             </li>
         </ul>
@@ -162,6 +163,24 @@
                         <p class="card-text">
                             Per-minute change rate on sum of committed offsets. Duration can be like '15s', '5m', '1h' 
                         </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/cluster/CLUSTER_ID/topic/TOPIC_ID/consumer/CONSUMER_GROUP_ID/lag/total</a></h5>
+                        <p class="card-text">Lag count: Sum of partition lags</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/cluster/CLUSTER_ID/topic/TOPIC_ID/consumer/CONSUMER_GROUP_ID/lag/total/seconds[/DURATION]</a></h5>
+                        <p class="card-text">Lag time: number of seconds required to consume the lag given current consume rate</p>
                     </div>
                 </div>
             </div>
@@ -637,6 +656,41 @@
                 </div>
             </div>
 
+        </div>
+
+        <div class="row">
+            <div class="">
+                <h1 id="hRedisPubSub">Redis - Pub/Sub</h1>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER]/pubsub/channels</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER]/pubsub/channel/CHANNEL/numsub</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER]/pubsub/numpat</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
