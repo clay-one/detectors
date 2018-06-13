@@ -79,7 +79,7 @@ namespace Root
         {
             MapDeveloperMiddleware(app, env);
             MapWebApi(app);
-            MapDefault(app);
+            MapStaticFiles(app);
 
             var secondaryApp = app.New();
             MapWebApi(secondaryApp);
@@ -94,18 +94,15 @@ namespace Root
             }
         }
 
-        private static void MapDefault(IApplicationBuilder app)
-        {
-            app.Run(context =>
-            {
-                context.Response.Redirect("/api");
-                return Task.CompletedTask;
-            });
-        }
-
         private static void MapWebApi(IApplicationBuilder app)
         {
             app.Map("/api", apiApp => { apiApp.UseMvc(); });
+        }
+        
+        private static void MapStaticFiles(IApplicationBuilder app)
+        {
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
         }
     }
 }
