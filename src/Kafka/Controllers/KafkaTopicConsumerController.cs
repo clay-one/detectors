@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Detectors.Kafka.Configuration;
 using Detectors.Kafka.Logic;
 using Microsoft.AspNetCore.Mvc;
@@ -53,14 +54,19 @@ namespace Detectors.Kafka.Controllers
                 if (topic == null)
                     return NotFound();
 
+                var rateCalculator = topic.GetTotalCommittedRateCalculator();
+                if (rateCalculator.SampleCount <= 0)
+                {
+                    topic.GetTotalCommitted();
+                    Thread.Sleep(8000);
+                }
+                
                 var totalCommit = topic.GetTotalCommitted();
                 var totalMaxOffets = topic.GetTotalHighOffsets();
 
                 var utcNow = DateTime.UtcNow;
-                var rate = topic
-                    .GetTotalCommittedRateCalculator()
-                    .CalculateRateAverage(utcNow - durationTimeSpan, utcNow);
-            
+                var rate = rateCalculator.CalculateRateAverage(utcNow - durationTimeSpan, utcNow);
+
                 var lag = totalMaxOffets - totalCommit;
                 var result = (Math.Abs(rate) < 0.01 ? 1440 : lag / rate) * 60;
                 

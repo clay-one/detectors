@@ -17,6 +17,14 @@ namespace Detectors.Kafka.Logic
             _lockObject = new object();
         }
 
+        public long SampleCount
+        {
+            get
+            {
+                lock (_lockObject) return _samples.Count;
+            }
+        }
+
         public void AddSample(double value)
         {
             lock (_lockObject)
