@@ -21,7 +21,7 @@ namespace Detectors.Redis.Util
             {
                 return redis.GetServer(hostAndPort);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
