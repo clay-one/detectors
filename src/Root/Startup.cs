@@ -1,4 +1,5 @@
 ﻿using Detectors.Kafka.Configuration;
+using Detectors.MongoDB.Configuration;
 using Detectors.Redis.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,6 +25,7 @@ namespace Root
         {
             services.AddSingleton<KafkaClusterConfigCollection>();
             services.AddSingleton<RedisConnectionConfigCollection>();
+            services.AddSingleton<MongoClusterConfigCollection>();
 
 //            services.AddSingleton<IHostedService, KafkaCommitMonitor>();
             

@@ -35,5 +35,17 @@
         "defaultDatabase": 5
       }
     ]
+  },
+  "mongodb": {
+    "clusters": [
+      {
+        "id": "cluster-one",
+        "connectionString": "mongodb://server-one:27017"
+      },
+      {
+        "id": "cluster-two",
+        "connectionString": "mongodb://server-two:27017"
+      }
+    ]
   }
 }
