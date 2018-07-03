@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Detectors.MongoDB.Configuration;
+using Detectors.MongoDB.Util;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
@@ -19,7 +21,7 @@ namespace Detectors.MongoDB.Controllers
         public async Task<IActionResult> GetKeys(string clusterId)
         {
             var client = _configuration.BuildClient(clusterId);
-            var databases = (await client.ListDatabasesAsync()).ToList();
+            var databases = (await client.ListDatabasesAsync()).ToEnumerable().Select(d => d.ToJObject()).ToList();
             
             return Ok(databases);
         }

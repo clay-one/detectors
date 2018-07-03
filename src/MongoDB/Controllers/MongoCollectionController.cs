@@ -1,8 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Detectors.MongoDB.Configuration;
+using Detectors.MongoDB.Util;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Newtonsoft.Json.Linq;
 
 namespace Detectors.MongoDB.Controllers
 {
@@ -23,7 +26,7 @@ namespace Detectors.MongoDB.Controllers
             var database = client.GetDatabase(dbName);
             var collection = database.GetCollection<BsonDocument>(collectionName);
 
-            var indexes = (await collection.Indexes.ListAsync()).ToList();
+            var indexes = (await collection.Indexes.ListAsync()).ToEnumerable().Select(i => i.ToJObject()).ToList();
             return Ok(indexes);
         }
         
