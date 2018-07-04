@@ -20,7 +20,7 @@ namespace Detectors.MongoDB.Controllers
         [HttpGet("databases.{format}")]
         public async Task<IActionResult> GetKeys(string clusterId)
         {
-            var client = _configuration.BuildClient(clusterId);
+            var client = _configuration.GetClient(clusterId);
             var databases = (await client.ListDatabasesAsync()).ToEnumerable().Select(d => d.ToJObject()).ToList();
             
             return Ok(databases);

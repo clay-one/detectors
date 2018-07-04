@@ -20,11 +20,9 @@ namespace Detectors.MongoDB.Controllers
         [HttpGet("collections.{format}")]
         public async Task<IActionResult> GetCollectionNames(string clusterId, string dbName)
         {
-            var client = _configuration.BuildClient(clusterId);
-            var database = client.GetDatabase(dbName);
-
-            var names = (await database.ListCollectionsAsync()).ToEnumerable().Select(d => d.ToJObject()).ToList();
-            return Ok(names);
+            var database = _configuration.GetDatabase(clusterId, dbName);
+            var collections = (await database.ListCollectionsAsync()).ToEnumerable().Select(d => d.ToJObject()).ToList();
+            return Ok(collections);
         }
         
     }

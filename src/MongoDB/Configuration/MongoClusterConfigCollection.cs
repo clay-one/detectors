@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Detectors.MongoDB.Configuration
@@ -14,10 +15,22 @@ namespace Detectors.MongoDB.Configuration
             _configuration = configuration;
         }
 
-        public MongoClient BuildClient(string clusterId)
+        public MongoClient GetClient(string clusterId)
         {
             var config = GetMongoClusterConfig(clusterId);
             return config?.BuildClient();
+        }
+
+        public IMongoDatabase GetDatabase(string clusterId, string dbName)
+        {
+            var config = GetMongoClusterConfig(clusterId);
+            return config?.GetDatabase(dbName);
+        }
+
+        public IMongoCollection<BsonDocument> GetCollection(string clusterId, string dbName, string collectionName)
+        {
+            var config = GetMongoClusterConfig(clusterId);
+            return config?.GetCollection(dbName, collectionName);
         }
         
         public List<MongoClusterConfig> GetAllMongoClusterConfigs()
