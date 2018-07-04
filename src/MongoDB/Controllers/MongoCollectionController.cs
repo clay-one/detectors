@@ -55,9 +55,77 @@ namespace Detectors.MongoDB.Controllers
         {
             var collection = _configuration.GetCollection(clusterId, dbName, collectionName);
             var filter = BsonSerializer.Deserialize<BsonDocument>(body.Filter.ToString());
-
+            
             var count = await collection.CountDocumentsAsync(filter, new CountOptions {});
             return Ok(count);
+        }
+
+        [HttpPost("aggregate")]
+        [HttpPost("aggregate.{format}")]
+        public async Task<IActionResult> Aggregate(string clusterId, string dbName, string collectionName, 
+            [FromBody]MongoAggregateRequest body)
+        {
+            var aggregateCursor = await AggregateInternal(clusterId, dbName, collectionName, body);
+            
+            var aggregate = await aggregateCursor.ToListAsync();
+            var result = aggregate.Select(a => a.ToJObject()).ToList();
+            return Ok(result);
+        }
+
+        [HttpPost("aggregate/object")]
+        [HttpPost("aggregate/object.{format}")]
+        public async Task<IActionResult> AggregateToObject(string clusterId, string dbName, string collectionName, 
+            [FromBody]MongoAggregateRequest body)
+        {
+            var aggregateCursor = await AggregateInternal(clusterId, dbName, collectionName, body);
+            var resultBson = await aggregateCursor.SingleOrDefaultAsync();
+            if (resultBson == null)
+                return NotFound();
+            
+            return Ok(resultBson.ToJObject());
+        }
+
+        [HttpPost("aggregate/integer")]
+        [HttpPost("aggregate/integer.{format}")]
+        public async Task<IActionResult> AggregateToInteger(string clusterId, string dbName, string collectionName, 
+            [FromBody]MongoAggregateRequest body)
+        {
+            var aggregateCursor = await AggregateInternal(clusterId, dbName, collectionName, body);
+            var resultBson = await aggregateCursor.SingleOrDefaultAsync();
+            if (resultBson == null)
+                return NotFound();
+
+            var result = resultBson.ToInteger();
+            if (result == null)
+                return NotFound();
+            
+            return Ok(result);
+        }
+
+        public async Task<IActionResult> Find()
+        {
+            return Ok();
+        }
+        
+        public async Task<IActionResult> FindObject()
+        {
+            return Ok();
+        }
+        
+        public async Task<IActionResult> FindInteger()
+        {
+            return Ok();
+        }
+
+        private async Task<IAsyncCursor<BsonDocument>> AggregateInternal(
+            string clusterId, string dbName, string collectionName, MongoAggregateRequest body)
+        {
+            var collection = _configuration.GetCollection(clusterId, dbName, collectionName);
+            var stages = body.Stages.Select(s => BsonSerializer.Deserialize<BsonDocument>(s.ToString()));
+
+            var pipelineDefinition = PipelineDefinition<BsonDocument, BsonDocument>.Create(stages);
+            var aggregateOptions = new AggregateOptions {};
+            return await collection.AggregateAsync(pipelineDefinition, aggregateOptions);
         }
     }
 }
