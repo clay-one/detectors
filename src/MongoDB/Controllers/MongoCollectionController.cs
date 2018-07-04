@@ -50,39 +50,14 @@ namespace Detectors.MongoDB.Controllers
         
         [HttpPost("count")]
         [HttpPost("count.{format}")]
-        public IActionResult CountDocuments(string clusterId, string dbName, string collectionName, 
+        public async Task<IActionResult> CountDocuments(string clusterId, string dbName, string collectionName, 
             [FromBody]MongoCountRequest body)
         {
             var collection = _configuration.GetCollection(clusterId, dbName, collectionName);
-            
+            var filter = BsonSerializer.Deserialize<BsonDocument>(body.Filter.ToString());
 
-//            var queryString = "{ \n    \"AccountId\" : \"demo-account\", \n    \"TenantId\" : \"\"\n}";
-//            var queryDoc = BsonSerializer.Deserialize<BsonDocument>(queryString);
-//
-//            var cursor = coll.FindSync(queryDoc, new FindOptions<BsonDocument> { });
-//            var result = cursor.ToList();
-//
-//            var stage1String = "{$match: { \"AccountId\" : \"demo-account\", \"TenantId\" : \"\"}}";
-//            var stage2String = "{$group: {  \"_id\": \"$AccountId\", \"count\": {\"$sum\": 1}}},";
-//            var stage3String = "{$count: \"count\"}";
-//
-//            var stage1Doc = BsonSerializer.Deserialize<BsonDocument>(stage1String);
-//            var stage2Doc = BsonSerializer.Deserialize<BsonDocument>(stage2String);
-//            var stage3Doc = BsonSerializer.Deserialize<BsonDocument>(stage3String);
-//
-//            var aggResult = coll.Aggregate(PipelineDefinition<BsonDocument, BsonDocument>.Create(stage1Doc, stage2Doc, stage3Doc));
-//            result = aggResult.ToList();
-//
-//            var p = o.GetValue("pipeline");
-//
-//            dynamic d = o;
-//            var p2 = d.pipeline;
-//            var p3 = d.alaki;
-//            
-//            var x1 = result[0];
-//            var x2 = x1.AsInt64;
-//
-            return Ok();
+            var count = await collection.CountDocumentsAsync(filter, new CountOptions {});
+            return Ok(count);
         }
     }
 }
