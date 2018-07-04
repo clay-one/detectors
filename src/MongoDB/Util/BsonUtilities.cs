@@ -1,15 +1,24 @@
 ﻿using System;
-using System.Linq;
+using System.Text.RegularExpressions;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using Newtonsoft.Json.Linq;
 
 namespace Detectors.MongoDB.Util
 {
     public static class BsonUtilities
     {
+        private static readonly Regex ObjectIdRegex = new Regex(@"ObjectId\(\""(\w+)\""\)");
+        private static readonly Regex IsoDateRegex = new Regex(@"ISODate\(\""([\w\-\.:]+)\""\)");
+        
         public static JObject ToJObject(this BsonDocument document)
         {
-            return JObject.Parse(document.ToJson());
+            var json = document.ToJson();
+
+            json = ObjectIdRegex.Replace(json, @"""$1""");
+            json = IsoDateRegex.Replace(json, @"""$1""");
+            
+            return JObject.Parse(json);
         }
 
         public static long? ToInteger(this BsonDocument document)
@@ -39,6 +48,11 @@ namespace Detectors.MongoDB.Util
             }
 
             return null;
+        }
+
+        public static BsonDocument ToBsonDocument(this JObject obj)
+        {
+            return obj == null ? null : BsonSerializer.Deserialize<BsonDocument>(obj.ToString());
         }
     }
 }

@@ -102,30 +102,76 @@ namespace Detectors.MongoDB.Controllers
             return Ok(result);
         }
 
-        public async Task<IActionResult> Find()
+        [HttpPost("find")]
+        [HttpPost("find.{format}")]
+        public async Task<IActionResult> Find(string clusterId, string dbName, string collectionName, 
+            [FromBody]MongoFindRequest body)
         {
-            return Ok();
+            var findCursor = await FindInternal(clusterId, dbName, collectionName, body);
+            
+            var aggregate = await findCursor.ToListAsync();
+            var result = aggregate.Select(a => a.ToJObject()).ToList();
+            return Ok(result);
         }
         
-        public async Task<IActionResult> FindObject()
+        [HttpPost("find/object")]
+        [HttpPost("find/object.{format}")]
+        public async Task<IActionResult> FindObject(string clusterId, string dbName, string collectionName, 
+            [FromBody]MongoFindRequest body)
         {
-            return Ok();
+            var findCursor = await FindInternal(clusterId, dbName, collectionName, body);
+            var resultBson = await findCursor.SingleOrDefaultAsync();
+            if (resultBson == null)
+                return NotFound();
+            
+            return Ok(resultBson.ToJObject());
         }
         
-        public async Task<IActionResult> FindInteger()
+        [HttpPost("find/integer")]
+        [HttpPost("find/integer.{format}")]
+        public async Task<IActionResult> FindInteger(string clusterId, string dbName, string collectionName, 
+            [FromBody]MongoFindRequest body)
         {
-            return Ok();
+            var findCursor = await FindInternal(clusterId, dbName, collectionName, body);
+            var resultBson = await findCursor.SingleOrDefaultAsync();
+            if (resultBson == null)
+                return NotFound();
+
+            var result = resultBson.ToInteger();
+            if (result == null)
+                return NotFound();
+            
+            return Ok(result);
         }
 
         private async Task<IAsyncCursor<BsonDocument>> AggregateInternal(
             string clusterId, string dbName, string collectionName, MongoAggregateRequest body)
         {
             var collection = _configuration.GetCollection(clusterId, dbName, collectionName);
-            var stages = body.Stages.Select(s => BsonSerializer.Deserialize<BsonDocument>(s.ToString()));
+            var stages = body.Stages?.Select(s => BsonSerializer.Deserialize<BsonDocument>(s.ToString()));
 
             var pipelineDefinition = PipelineDefinition<BsonDocument, BsonDocument>.Create(stages);
             var aggregateOptions = new AggregateOptions {};
             return await collection.AggregateAsync(pipelineDefinition, aggregateOptions);
+        }
+
+        private async Task<IAsyncCursor<BsonDocument>> FindInternal(
+            string clusterId, string dbName, string collectionName, MongoFindRequest body)
+        {
+            var collection = _configuration.GetCollection(clusterId, dbName, collectionName);
+            var filter = body.Filter.ToBsonDocument();
+            var sort = body.Sort.ToBsonDocument();
+            var projection = body.Projection.ToBsonDocument();
+
+            var findOptions = new FindOptions<BsonDocument, BsonDocument>()
+            {
+                Limit = body.Limit,
+                Skip = body.Skip,
+                Sort = sort,
+                Projection = projection
+            };
+            
+            return await collection.FindAsync(filter, findOptions);
         }
     }
 }
