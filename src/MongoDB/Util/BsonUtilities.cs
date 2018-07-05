@@ -10,6 +10,7 @@ namespace Detectors.MongoDB.Util
     {
         private static readonly Regex ObjectIdRegex = new Regex(@"ObjectId\(\""(\w+)\""\)");
         private static readonly Regex IsoDateRegex = new Regex(@"ISODate\(\""([\w\-\.:]+)\""\)");
+        private static readonly Regex CsuUidRegex = new Regex(@"CSUUID\(\""([\w\-]+)\""\)");
         
         public static JObject ToJObject(this BsonDocument document)
         {
@@ -17,6 +18,7 @@ namespace Detectors.MongoDB.Util
 
             json = ObjectIdRegex.Replace(json, @"""$1""");
             json = IsoDateRegex.Replace(json, @"""$1""");
+            json = CsuUidRegex.Replace(json, @"""$1""");
             
             return JObject.Parse(json);
         }
