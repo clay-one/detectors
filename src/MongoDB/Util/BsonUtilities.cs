@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 using Newtonsoft.Json.Linq;
 
@@ -8,18 +9,9 @@ namespace Detectors.MongoDB.Util
 {
     public static class BsonUtilities
     {
-        private static readonly Regex ObjectIdRegex = new Regex(@"ObjectId\(\""(\w+)\""\)");
-        private static readonly Regex IsoDateRegex = new Regex(@"ISODate\(\""([\w\-\.:]+)\""\)");
-        private static readonly Regex CsuUidRegex = new Regex(@"CSUUID\(\""([\w\-]+)\""\)");
-        
         public static JObject ToJObject(this BsonDocument document)
         {
-            var json = document.ToJson();
-
-            json = ObjectIdRegex.Replace(json, @"""$1""");
-            json = IsoDateRegex.Replace(json, @"""$1""");
-            json = CsuUidRegex.Replace(json, @"""$1""");
-            
+            var json = document.ToJson(new JsonWriterSettings { OutputMode = JsonOutputMode.Strict});
             return JObject.Parse(json);
         }
 
