@@ -54,7 +54,8 @@ namespace Detectors.MongoDB.Controllers
             [FromBody]MongoCountRequest body)
         {
             var collection = _configuration.GetCollection(clusterId, dbName, collectionName);
-            var filter = BsonSerializer.Deserialize<BsonDocument>(body.Filter.ToString());
+            var filter = body.Filter.ToBsonDocument();
+            filter.Preprocess();
             
             var count = await collection.CountDocumentsAsync(filter, new CountOptions {});
             return Ok(count);
@@ -148,7 +149,7 @@ namespace Detectors.MongoDB.Controllers
             string clusterId, string dbName, string collectionName, MongoAggregateRequest body)
         {
             var collection = _configuration.GetCollection(clusterId, dbName, collectionName);
-            var stages = body.Stages?.Select(s => BsonSerializer.Deserialize<BsonDocument>(s.ToString()));
+            var stages = body.Stages?.Select(s => s.ToBsonDocument().Preprocess());
 
             var pipelineDefinition = PipelineDefinition<BsonDocument, BsonDocument>.Create(stages);
             var aggregateOptions = new AggregateOptions {};
@@ -159,9 +160,9 @@ namespace Detectors.MongoDB.Controllers
             string clusterId, string dbName, string collectionName, MongoFindRequest body)
         {
             var collection = _configuration.GetCollection(clusterId, dbName, collectionName);
-            var filter = body.Filter.ToBsonDocument();
+            var filter = body.Filter.ToBsonDocument().Preprocess();
             var sort = body.Sort.ToBsonDocument();
-            var projection = body.Projection.ToBsonDocument();
+            var projection = body.Projection.ToBsonDocument().Preprocess();
 
             var findOptions = new FindOptions<BsonDocument, BsonDocument>()
             {
