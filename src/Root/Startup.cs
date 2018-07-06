@@ -46,6 +46,7 @@ namespace Root
                     options.OutputFormatters.Add(new HtmlOutputFormatter());
                     options.OutputFormatters.Add(new JsvOutputFormatter());
                     options.OutputFormatters.Add(new MarkdownOutputFormatter());
+                    options.OutputFormatters.Add(new PrtgOutputFormatter());
                     options.OutputFormatters.Add(new TableOutputFormatter());
                     options.OutputFormatters.Add(new ToStringOutputFormatter());
                     options.OutputFormatters.Add(new XmlOutputFormatter());
@@ -67,6 +68,7 @@ namespace Root
                     mappings.SetMediaTypeMappingForFormat("jsv", "application/vnd+detectors.jsv");
                     mappings.SetMediaTypeMappingForFormat("markdown", "application/vnd+detectors.markdown");
                     mappings.SetMediaTypeMappingForFormat("md", "application/vnd+detectors.markdown");
+                    mappings.SetMediaTypeMappingForFormat("prtg", "application/vnd+detectors.prtg");
                     mappings.SetMediaTypeMappingForFormat("tbl", "application/vnd+detectors.table");
                     mappings.SetMediaTypeMappingForFormat("table", "application/vnd+detectors.table");
                     mappings.SetMediaTypeMappingForFormat("str", "application/vnd+detectors.string");
