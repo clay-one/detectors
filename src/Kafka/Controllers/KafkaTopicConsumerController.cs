@@ -62,12 +62,23 @@ namespace Detectors.Kafka.Controllers
                 }
                 
                 var totalCommit = topic.GetTotalCommitted();
-                var totalMaxOffets = topic.GetTotalHighOffsets();
-
                 var utcNow = DateTime.UtcNow;
                 var rate = rateCalculator.CalculateRateAverage(utcNow - durationTimeSpan, utcNow);
 
+                if (Math.Abs(rate) < 0.01)
+                {
+                    Thread.Sleep(8000);
+                    totalCommit = topic.GetTotalCommitted();
+                    utcNow = DateTime.UtcNow;
+                    rate = rateCalculator.CalculateRateAverage(utcNow - durationTimeSpan, utcNow);
+                }
+
+                var totalMaxOffets = topic.GetTotalHighOffsets();
                 var lag = totalMaxOffets - totalCommit;
+                
+                if (lag == 0)
+                    return Ok((double)0);
+                
                 var result = (Math.Abs(rate) < 0.01 ? 1440 : lag / rate) * 60;
                 
                 return Ok(result);
