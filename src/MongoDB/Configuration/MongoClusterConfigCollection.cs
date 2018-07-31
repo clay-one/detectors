@@ -21,6 +21,12 @@ namespace Detectors.MongoDB.Configuration
             return config?.BuildClient();
         }
 
+        public MongoClient GetDirectClient(string clusterId)
+        {
+            var config = GetMongoClusterConfig(clusterId);
+            return config?.BuildDirecetClient();
+        }
+
         public IMongoDatabase GetDatabase(string clusterId, string dbName)
         {
             var config = GetMongoClusterConfig(clusterId);

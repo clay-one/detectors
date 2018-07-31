@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using System.Linq;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Detectors.MongoDB.Configuration
@@ -11,6 +12,15 @@ namespace Detectors.MongoDB.Configuration
         public MongoClient BuildClient()
         {
             return new MongoClient(ConnectionString);
+        }
+
+        public MongoClient BuildDirecetClient()
+        {
+            var urlBuilder = new MongoUrlBuilder(ConnectionString);
+            urlBuilder.ConnectionMode = ConnectionMode.Direct;
+            urlBuilder.Server = urlBuilder.Servers.First();
+
+            return new MongoClient(urlBuilder.ToMongoUrl());
         }
 
         public IMongoDatabase GetDatabase(string dbName)
