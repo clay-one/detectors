@@ -93,5 +93,13 @@ namespace Detectors.MongoDB.Util
 
             return bson;
         }
+
+        public static DateTime? ToDateTime(this BsonTimestamp ts)
+        {
+            if (ts.Timestamp != 0)
+                return new DateTime(1970, 1, 1).AddSeconds(ts.Timestamp);
+
+            return null;
+        }
     }
 }
