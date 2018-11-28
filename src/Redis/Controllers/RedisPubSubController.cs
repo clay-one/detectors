@@ -1,26 +1,61 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using Detectors.Redis.Configuration;
+using Detectors.Redis.Util;
+using Microsoft.AspNetCore.Mvc;
+using StackExchange.Redis;
 
 namespace Detectors.Redis.Controllers
 {
-    [Route("server/{serverId}/db/{dbId}/pubsub")]
+    [Route("redis/connection/{connectionId}/server/{hostAndPort}/pubsub")]
+    [Route("redis/connection/{connectionId}/pubsub")]
     public class RedisPubSubController : Controller
     {
-        [HttpGet("channels/{pattern}")]
-        public IActionResult GetChannelList(string serverId, int dbId, string pattern)
+        private readonly RedisConnectionConfigCollection _configuration;
+        public RedisPubSubController(RedisConnectionConfigCollection configuration)
         {
-            return Ok("Not implemented yet.");
+            _configuration = configuration;
+        }
+
+        [HttpGet("channels")]
+        [HttpGet("channels.{format}")]
+        public IActionResult GetChannelList(string connectionId, string pattern = null, string hostAndPort = null)
+        {
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                if (redis == null)
+                    return NotFound();
+
+                var channels = redis.GetServerOrDefault(hostAndPort).SubscriptionChannels(pattern ?? default(RedisChannel));
+                return Ok(channels.Select(c => c.ToString()));
+            }
         }
         
         [HttpGet("channel/{channel}/numsub")]
-        public IActionResult GetChannelNumSub(string serverId, int dbId, string channel)
+        [HttpGet("channel/{channel}/numsub.{format}")]
+        public IActionResult GetChannelNumSub(string connectionId, string channel, string hostAndPort = null)
         {
-            return Ok("Not implemented yet.");
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                if (redis == null)
+                    return NotFound();
+
+                var count = redis.GetServerOrDefault(hostAndPort).SubscriptionSubscriberCount(channel);
+                return Ok(count);
+            }
         }
         
         [HttpGet("numpat")]
-        public IActionResult GetNumPat(string serverId, int dbId, string channel)
+        [HttpGet("numpat.{format}")]
+        public IActionResult GetNumPat(string connectionId, string hostAndPort = null)
         {
-            return Ok("Not implemented yet.");
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                if (redis == null)
+                    return NotFound();
+
+                var count = redis.GetServerOrDefault(hostAndPort).SubscriptionPatternCount();
+                return Ok(count);
+            }
         }
         
     }

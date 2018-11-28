@@ -7,15 +7,15 @@ namespace Detectors.Kafka.Logic
 {
     public class KafkaTopicWrapper : IDisposable
     {
-        protected readonly ClusterConfiguration Configuration;
+        protected readonly KafkaClusterConfig Config;
         protected readonly string TopicId;
         
         protected readonly Lazy<TopicMetadata> TopicMetadata;
         protected readonly Lazy<Producer> Producer;
 
-        public KafkaTopicWrapper(ClusterConfiguration configuration, string topicId)
+        public KafkaTopicWrapper(KafkaClusterConfig config, string topicId)
         {
-            Configuration = configuration;
+            Config = config;
             TopicId = topicId;
 
             Producer = new Lazy<Producer>(LoadProducer);
@@ -24,17 +24,42 @@ namespace Detectors.Kafka.Logic
         
         public TopicMetadata Metadata => TopicMetadata.Value;
         
-        public long GetMaxOffset(int partitionId)
+        public long GetLowOffset(int partitionId)
         {
-            return Producer.Value.QueryWatermarkOffsets(new TopicPartition(TopicId, partitionId)).High.Value;
+            var offsets = Producer.Value.QueryWatermarkOffsets(new TopicPartition(TopicId, partitionId));
+
+            if (offsets.Low.IsSpecial)
+                throw new InvalidKafkaResponseException(
+                    $"Returned high offset is special ({offsets.High.Value}) for partition '{partitionId}' on topic '{TopicId}'.");
+            
+            return offsets.Low.Value;
+        }
+        
+        public long GetHighOffset(int partitionId)
+        {
+            var offsets = Producer.Value.QueryWatermarkOffsets(new TopicPartition(TopicId, partitionId));
+
+            if (offsets.High.IsSpecial)
+                throw new InvalidKafkaResponseException(
+                    $"Returned high offset is special ({offsets.High.Value}) for partition '{partitionId}' on topic '{TopicId}'.");
+            
+            return offsets.High.Value;
         }
 
-        public long GetTotalMaxOffsets()
+        public long GetTotalHighOffsets()
         {
-            return TopicMetadata.Value.Partitions
+            var result = TopicMetadata.Value.Partitions
                 .AsParallel()
-                .Select(p => GetMaxOffset(p.PartitionId))
+                .Select(p => GetHighOffset(p.PartitionId))
                 .Sum();
+            
+            GetTotalMaxOffsetsRateCalculator().AddSample(result);
+            return result;
+        }
+
+        public RateCalculator GetTotalMaxOffsetsRateCalculator()
+        {
+            return RateCalculatorCollection.GetCalculator(TotalMaxOffsetsRateCalculatorKey, true);
         }
 
         public virtual void Dispose()
@@ -45,16 +70,23 @@ namespace Detectors.Kafka.Logic
 
         private Producer LoadProducer()
         {
-            return Configuration.BuildProducer();
+            return Config.BuildProducer();
         }
 
         private TopicMetadata LoadTopicMetadata()
         {
-            return Producer
-                .Value
+            var result = Producer.Value
                 .GetMetadata(false, TopicId, TimeSpan.FromSeconds(5))
-                .Topics
-                .FirstOrDefault();
+                .Topics.FirstOrDefault();
+            
+            if (result.Error.HasError)
+                throw new InvalidKafkaResponseException($"");
+            
+            return result;
         }
+        
+        private string TotalMaxOffsetsRateCalculatorKey => 
+            $"kafka/cluster/{Config.Id}/topic/{TopicId}/offsets/total";
+
     }
 }

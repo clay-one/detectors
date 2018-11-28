@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redis", "Redis\Redis.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDB", "MongoDB\MongoDB.csproj", "{3819E976-C1C2-42AD-9A66-EA9B7558C6D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Root", "Root\Root.csproj", "{9388F125-6BBA-4831-AAF9-9148F0E8316A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{3819E976-C1C2-42AD-9A66-EA9B7558C6D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3819E976-C1C2-42AD-9A66-EA9B7558C6D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3819E976-C1C2-42AD-9A66-EA9B7558C6D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9388F125-6BBA-4831-AAF9-9148F0E8316A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9388F125-6BBA-4831-AAF9-9148F0E8316A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9388F125-6BBA-4831-AAF9-9148F0E8316A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9388F125-6BBA-4831-AAF9-9148F0E8316A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,871 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Detectors - Home</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+</head>
+<body data-spy="scroll" data-target="#navbar-header" style="position: relative;">
+
+    <nav id="navbar-header" class="navbar fixed-top navbar-light bg-light navbar-expand-lg">
+        <a class="navbar-brand" href="#">Detectors Cheatsheet</a>
+        <ul class="nav nav-pills">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Kafka</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#hKafkaBrokers">Brokers</a>
+                    <a class="dropdown-item" href="#hKafkaTopics">Topics</a>
+                    <a class="dropdown-item" href="#hKafkaConsumers">Consumer Groups</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Redis</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#hRedisServers">Connection and Server</a>
+                    <a class="dropdown-item" href="#hRedisKeyspace">Keyspace</a>
+                    <a class="dropdown-item" href="#hRedisStrings">Strings</a>
+                    <a class="dropdown-item" href="#hRedisLists">Lists</a>
+                    <a class="dropdown-item" href="#hRedisSets">Sets</a>
+                    <a class="dropdown-item" href="#hRedisSortedSets">Sorted Sets</a>
+                    <a class="dropdown-item" href="#hRedisPubSub">Pub/Sub</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">MongoDB</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#hMongoCluster">Cluster</a>
+                    <a class="dropdown-item" href="#hMongoDatabase">Database</a>
+                    <a class="dropdown-item" href="#hMongoReplicaset">Replica Set</a>
+                    <a class="dropdown-item" href="#hMongoCollection">Collection</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        
+        <div class="row">
+            <div class="">
+                <h1 id="hKafkaBrokers">Kafka - Brokers</h1>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/clusters</a></h5>
+                        <p class="card-text">List of known Kafka clusters</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/cluster/CLUSTER_ID/metadata</a></h5>
+                        <p class="card-text">Full metadata for a cluster</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/cluster/CLUSTER_ID/brokers</a></h5>
+                        <p class="card-text">List of brokers in a cluster</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="">
+                <h1 id="hKafkaTopics">Kafka - Topics</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/cluster/CLUSTER_ID/topics</a></h5>
+                        <p class="card-text">List of topics and the number of partitions</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/cluster/CLUSTER_ID/topic-partitions</a></h5>
+                        <p class="card-text">Detailed list of all partitions for all topics, with leader and ISRs</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/cluster/CLUSTER_ID/topic/TOPIC_ID/partitions</a></h5>
+                        <p class="card-text">Detailed list of partitions for a single topic, with leader and ISRs</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/cluster/CLUSTER_ID/topic/TOPIC_ID/offsets/total</a></h5>
+                        <p class="card-text">Sum of high watermark offsets</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/cluster/CLUSTER_ID/topic/TOPIC_ID/offsets/total/rate/[DURATION]</a></h5>
+                        <p class="card-text">
+                            Per-minute change rate on sum of high watermark offsets. Duration can be like '15s', '5m', '1h'
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="">
+                <h1 id="hKafkaConsumers">Kafka - Consumer Groups</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/cluster/CLUSTER_ID/groups</a></h5>
+                        <p class="card-text">List of consumer groups known to a cluster</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/cluster/CLUSTER_ID/topic/TOPIC_ID/consumer/CONSUMER_GROUP_ID/commit/total</a></h5>
+                        <p class="card-text">Sum of committed offsets</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/cluster/CLUSTER_ID/topic/TOPIC_ID/consumer/CONSUMER_GROUP_ID/commit/total/rate/[DURATION]</a></h5>
+                        <p class="card-text">
+                            Per-minute change rate on sum of committed offsets. Duration can be like '15s', '5m', '1h' 
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/cluster/CLUSTER_ID/topic/TOPIC_ID/consumer/CONSUMER_GROUP_ID/lag/total</a></h5>
+                        <p class="card-text">Lag count: Sum of partition lags</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/kafka/cluster/CLUSTER_ID/topic/TOPIC_ID/consumer/CONSUMER_GROUP_ID/lag/total/seconds[/DURATION]</a></h5>
+                        <p class="card-text">Lag time: number of seconds required to consume the lag given current consume rate</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="">
+                <h1 id="hRedisServers">Redis - Connection and Server</h1>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connections</a></h5>
+                        <p class="card-text">List of known Redis connections</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID/servers</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER_ID]/ping</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER_ID]/echo/MESSAGE</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER_ID]/client-list</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER_ID]/raw-client-list</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER_ID]/config</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER_ID]/info[/SECTION]</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER_ID]/lastsave</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER_ID]/lastsave/elapsed</a></h5>
+                        <p class="card-text">Seconds since the last save</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER_ID]/slowlog</a></h5>
+                        <p class="card-text">Seconds since the last save</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER_ID]/time</a></h5>
+                        <p class="card-text">Seconds since the last save</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="">
+                <h1 id="hRedisKeyspace">Redis - Keyspace</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/keys</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/scan-keys</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/random-key</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/size</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/key/KEY/exists</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/key/KEY/dump</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/key/KEY/object/refcount</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/key/KEY/object/encoding</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/key/KEY/object/idletime</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/key/KEY/object/freq</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/key/KEY/object/help</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/key/KEY/ttl</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/key/KEY/type</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="">
+                <h1 id="hRedisStrings">Redis - Strings</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/string/KEY/value</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/string/KEY/bit/OFFSET</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/string/KEY/bit-count?start=0&amp;end=-1</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/string/KEY/bit-position/BIT?start=0&amp;end=-1</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/string/KEY/range?start=0&amp;end=-1</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/string/KEY/length</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="">
+                    <h1 id="hRedisLists">Redis - Lists</h1>
+                </div>
+            </div>
+            
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/list/KEY/length</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/list/KEY/index/INDEX[/string]</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/list/KEY/range[/string]?start=0&amp;stop=-1</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="">
+                <h1 id="hRedisSets">Redis - Sets</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/set/KEY/card</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/set/KEY/ismember/MEMBER</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/set/KEY/all-members</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/set/KEY/scan-members?pattern=&amp;count=10&amp;cursor=0</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/set/KEY/random-members?count=1</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="">
+                <h1 id="hRedisSortedSets">Redis - Sorted Sets</h1>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/sorted-set/KEY/card</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/sorted-set/KEY/count?min=&amp;max=</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/sorted-set/KEY/range-by-score?start=&amp;stop=&amp;skip=&amp;take=&amp;reverse=false</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/sorted-set/KEY/range-by-rank?start=&amp;stop=&amp;reverse=false</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/sorted-set/KEY/range-by-value?start=&amp;stop=&amp;skip=&amp;take=</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/sorted-set/KEY/member/MEMBER/rank?reverse=false</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/sorted-set/KEY/member/MEMBER/score</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/db/DB_ID]/sorted-set/KEY/scan-members?pattern=&amp;count=10&amp;cursor=0</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="">
+                <h1 id="hRedisPubSub">Redis - Pub/Sub</h1>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER]/pubsub/channels</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER]/pubsub/channel/CHANNEL/numsub</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/redis/connection/CONNECTION_ID[/server/SERVER]/pubsub/numpat</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="">
+                <h1 id="hMongoCluster">MongoDB - Cluster</h1>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/mongodb/clusters</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="">
+                <h1 id="hMongoDatabase">MongoDB - Database</h1>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/mongodb/cluster/CLUSTER_ID/databases</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="">
+                <h1 id="hMongoReplicaset">MongoDB - Replica set</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/mongodb/cluster/CLUSTER_ID/replicaset/status</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="">
+                <h1 id="hMongoCollection">MongoDB - Collection</h1>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/mongodb/cluster/CLUSTER_ID/databases/DB_NAME/collections</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/mongodb/cluster/CLUSTER_ID/databases/DB_NAME/collection/COLLECTION_NAME/indexes</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/mongodb/cluster/CLUSTER_ID/databases/DB_NAME/collection/COLLECTION_NAME/count/estimate</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">/api/mongodb/cluster/CLUSTER_ID/databases/DB_NAME/collection/COLLECTION_NAME/count/exact</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">POST /api/mongodb/cluster/CLUSTER_ID/databases/DB_NAME/collection/COLLECTION_NAME/count</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">POST /api/mongodb/cluster/CLUSTER_ID/databases/DB_NAME/collection/COLLECTION_NAME/aggregate</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">POST /api/mongodb/cluster/CLUSTER_ID/databases/DB_NAME/collection/COLLECTION_NAME/aggregate/object</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">POST /api/mongodb/cluster/CLUSTER_ID/databases/DB_NAME/collection/COLLECTION_NAME/aggregate/integer</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">POST /api/mongodb/cluster/CLUSTER_ID/databases/DB_NAME/collection/COLLECTION_NAME/find</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">POST /api/mongodb/cluster/CLUSTER_ID/databases/DB_NAME/collection/COLLECTION_NAME/find/object</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="">POST /api/mongodb/cluster/CLUSTER_ID/databases/DB_NAME/collection/COLLECTION_NAME/find/integer</a></h5>
+                        <p class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+</body>
+</html>

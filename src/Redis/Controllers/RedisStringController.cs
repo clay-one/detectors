@@ -1,53 +1,102 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Detectors.Redis.Configuration;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Detectors.Redis.Controllers
 {
-    [Route("server/{serverId}/db/{dbId}/string/{key}")]
+    [Route("redis/connection/{connectionId}/db/{dbId}/string/{key}")]
+    [Route("redis/connection/{connectionId}/string/{key}")]
     public class RedisStringController : Controller
     {
-        [HttpGet("")]
-        public IActionResult GetValue(string serverId, int dbId, string key)
+        private readonly RedisConnectionConfigCollection _configuration;
+        public RedisStringController(RedisConnectionConfigCollection configuration)
         {
-            return Ok("Not implemented yet.");
+            _configuration = configuration;
+        }
+
+        [HttpGet("value")]
+        [HttpGet("value.{format}")]
+        public IActionResult GetValue(string connectionId, string key, int dbId = -1)
+        {
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                if (redis == null)
+                    return NotFound();
+
+                var result = redis.GetDatabase(dbId).StringGet(key);
+                return Ok(result.ToString());
+            }
         }
         
         [HttpGet("bit/{offset}")]
-        public IActionResult GetBit(string serverId, int dbId, string key, int offset)
+        [HttpGet("bit/{offset}.{format}")]
+        public IActionResult GetBit(string connectionId, string key, long offset, int dbId = -1)
         {
-            return Ok("Not implemented yet.");
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                if (redis == null)
+                    return NotFound();
+
+                var result = redis.GetDatabase(dbId).StringGetBit(key, offset);
+                return Ok(result.ToString());
+            }
         }
         
         [HttpGet("bit-count")]
-        public IActionResult GetBitCount(string serverId, int dbId, string key)
+        [HttpGet("bit-count.{format}")]
+        public IActionResult GetBitCount(string connectionId, string key, 
+            long start = 0L, long end = -1L, int dbId = -1)
         {
-            return Ok("Not implemented yet.");
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                if (redis == null)
+                    return NotFound();
+
+                var result = redis.GetDatabase(dbId).StringBitCount(key, start, end);
+                return Ok(result);
+            }
         }
-        
-        [HttpGet("bit-count/from/{from}/to/{to}")]
-        public IActionResult GetBitCountWithRange(string serverId, int dbId, string key, int from, int to)
-        {
-            return Ok("Not implemented yet.");
-        }
-        
+                
         [HttpGet("bit-position/{bit}")]
-        [HttpGet("bit-position/{bit}/from/{from}")]
-        [HttpGet("bit-position/{bit}/to/{to}")]
-        [HttpGet("bit-position/{bit}/from/{from}/to/{to}")]
-        public IActionResult GetBitPosition(string serverId, int dbId, string key, bool bit, int from, int to)
+        [HttpGet("bit-position/{bit}.{format}")]
+        public IActionResult GetBitPosition(string connectionId, string key, bool bit, 
+            long start = 0L, long end = -1L, int dbId = -1)
         {
-            return Ok("Not implemented yet.");
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                if (redis == null)
+                    return NotFound();
+
+                var result = redis.GetDatabase(dbId).StringBitPosition(key, bit, start, end);
+                return Ok(result);
+            }
         }
         
-        [HttpGet("range/from/{from}/to/{to}")]
-        public IActionResult GetRange(string serverId, int dbId, string key, int from, int to)
+        [HttpGet("range")]
+        [HttpGet("range.{format}")]
+        public IActionResult GetRange(string connectionId, string key, long start = 0, long end = -1, int dbId = -1)
         {
-            return Ok("Not implemented yet.");
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                if (redis == null)
+                    return NotFound();
+
+                var result = redis.GetDatabase(dbId).StringGetRange(key, start, end);
+                return Ok(result.ToString());
+            }
         }
         
         [HttpGet("length")]
-        public IActionResult GetLength(string serverId, int dbId, string key)
+        [HttpGet("length.{format}")]
+        public IActionResult GetLength(string connectionId, string key, int dbId = -1)
         {
-            return Ok("Not implemented yet.");
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                if (redis == null)
+                    return NotFound();
+
+                var result = redis.GetDatabase(dbId).StringLength(key);
+                return Ok(result);
+            }
         }
     }
 }
