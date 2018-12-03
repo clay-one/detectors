@@ -14,33 +14,39 @@ namespace Detectors.Kafka.Configuration
         public Consumer BuildConsumer(string consumerId)
         {
             var consumer = new Consumer(BuildConfigDictionary(consumerId));
-            
+
             if (DebugEnabled)
                 consumer.OnLog += LogMessage;
 
             return consumer;
         }
 
-        public Producer BuildProducer()
+        public Producer BuildProducer(string bootstrapServers = null)
         {
-            var producer = new Producer(BuildConfigDictionary());
+            var producer = new Producer(BuildConfigDictionary(bootstrapServers: bootstrapServers));
 
             if (DebugEnabled)
                 producer.OnLog += LogMessage;
-            
+
             return producer;
         }
-        
-        private string BuildBrokersString()
+
+        public string BuildBrokersString(List<KafkaClusterBrokerConfig> brokers = null)
         {
-            return string.Join(",", Brokers.Select(b => $"{b.Host}:{b.Port}"));
+            if (brokers == null)
+                brokers = Brokers;
+
+            return string.Join(",", brokers.Select(b => $"{b.Host}:{b.Port}"));
         }
 
-        private Dictionary<string, object> BuildConfigDictionary(string consumerId = null)
+        private Dictionary<string, object> BuildConfigDictionary(string consumerId = null, string bootstrapServers = null)
         {
+            if (bootstrapServers == null)
+                bootstrapServers = BuildBrokersString();
+
             var result = new Dictionary<string, object>
             {
-                {"bootstrap.servers", BuildBrokersString()},
+                {"bootstrap.servers", bootstrapServers},
                 {"client.id", "detectors"},
                 {"enable.auto.commit", "false"},
                 {"offset.store.method", "none"}
@@ -49,7 +55,7 @@ namespace Detectors.Kafka.Configuration
 
             if (DebugEnabled)
                 result["debug"] = "all";
-            
+
             if (consumerId != null)
                 result["group.id"] = consumerId;
 
