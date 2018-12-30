@@ -11,7 +11,7 @@ namespace Detectors.Kafka.Configuration
     {
         private readonly IConfiguration _configuration;
         private readonly IHostingEnvironment _environment;
-        
+
         public KafkaClusterConfigCollection(IConfiguration configuration, IHostingEnvironment environment)
         {
             _configuration = configuration;
@@ -29,7 +29,7 @@ namespace Detectors.Kafka.Configuration
             var config = GetKafkaClusterConfig(clusterId);
             return config == null ? null : new KafkaTopicConsumerWrapper(config, topicId, consumerId);
         }
-        
+
         public Producer BuildProducer(string clusterId)
         {
             var config = GetKafkaClusterConfig(clusterId);
@@ -50,13 +50,13 @@ namespace Detectors.Kafka.Configuration
                 .Select(c => c.Get<KafkaClusterConfig>())
                 .ToList();
         }
-        
+
         public KafkaClusterConfig GetKafkaClusterConfig(string clusterId)
         {
             var result = GetAllKafkaClusterConfigs().FirstOrDefault(c => c.Id == clusterId);
             if (result == null)
                 return null;
-            
+
             result.DebugEnabled = _environment.IsDevelopment();
             return result;
         }

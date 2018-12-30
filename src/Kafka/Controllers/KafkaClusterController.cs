@@ -1,17 +1,22 @@
-﻿using System;
-using System.Linq;
-using Detectors.Kafka.Configuration;
+﻿using Detectors.Kafka.Configuration;
+using Detectors.Kafka.Logic;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
 
 namespace Detectors.Kafka.Controllers
 {
     [Route("kafka/cluster/{clusterId}")]
     public class KafkaClusterController : Controller
     {
+        private readonly NotSyncReplicaLogic _notSyncReplicaLogic;
         private readonly KafkaClusterConfigCollection _configuration;
-        public KafkaClusterController(KafkaClusterConfigCollection configuration)
+
+        public KafkaClusterController(KafkaClusterConfigCollection configuration, NotSyncReplicaLogic notSyncReplicaLogic)
         {
             _configuration = configuration;
+            _notSyncReplicaLogic = notSyncReplicaLogic;
         }
 
         [HttpGet("")]
@@ -53,7 +58,7 @@ namespace Detectors.Kafka.Controllers
                 return Ok(result);
             }
         }
-        
+
         [HttpGet("topics")]
         [HttpGet("topics.{format}")]
         public IActionResult GetTopicList(string clusterId)
@@ -62,7 +67,7 @@ namespace Detectors.Kafka.Controllers
             {
                 if (producer == null)
                     return NotFound();
-                
+
                 var md = producer.GetMetadata(true, null, TimeSpan.FromSeconds(10));
                 var resultObject = md.Topics.Select(t => new
                 {
@@ -72,7 +77,7 @@ namespace Detectors.Kafka.Controllers
                 return Ok(resultObject);
             }
         }
-        
+
         [HttpGet("topic-partitions")]
         [HttpGet("topic-partitions.{format}")]
         public IActionResult GetTopicPartitionList(string clusterId)
@@ -95,7 +100,7 @@ namespace Detectors.Kafka.Controllers
                 return Ok(result);
             }
         }
-        
+
         [HttpGet("groups")]
         [HttpGet("groups.{format}")]
         public IActionResult GetGroupList(string clusterId)
@@ -108,7 +113,7 @@ namespace Detectors.Kafka.Controllers
                 // Dummy calls to GetMetadata to avoid "Broker transport failure" issue
                 producer.GetMetadata();
                 producer.GetMetadata();
-                
+
                 var groups = producer.ListGroups(TimeSpan.FromSeconds(10));
                 var resultObject = groups.Select(g => new
                 {
@@ -120,6 +125,25 @@ namespace Detectors.Kafka.Controllers
                 }).ToList();
 
                 return Ok(resultObject);
+            }
+        }
+
+        [HttpGet("not-sync-replicas")]
+        [HttpGet("not-sync-replicas.{format}")]
+        public IActionResult GetNotSyncReplicaList(string clusterId)
+        {
+            try
+            {
+                var brokerPartitionList = _notSyncReplicaLogic.GetBrokerPartitionList(clusterId);
+                if (brokerPartitionList == null || brokerPartitionList.Count <= 1)
+                    return Ok("No replicas founds");
+
+                var notSyncReplicaList = _notSyncReplicaLogic.GetNotSyncReplicaList(brokerPartitionList);
+                return notSyncReplicaList.Any() ? Ok(notSyncReplicaList) : Ok("All replicas are in sync");
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
     }
