@@ -64,14 +64,18 @@ See [Kafka Module Documentation](docs/kafka.md) for configuration and detailed U
 * Redis Sorted Sets: query cardinality, count by score range, retrieve by score/rank/value range, scan members, query rank/score of a member
 * Redis Strings: query string length, fetch whole string or a range, query bits by position, find bit positions, or count bits
 
-See [Redis Module Documentation](docs/redis.md) for configuration and detailed URL schems.
+See [Redis Module Documentation](docs/redis.md) for configuration and detailed URL schemes.
 
 
 
 
 ## MongoDB module
 
-MongoDB module is planned but not yet implemented.
+* Browse databases and collections
+* View replica set status
+* Collections: List indexes, query, count, and aggregate documents
+
+See [MongoDB Module Documentation](docs/mongodb.md) for configuration and detailed URL schemes.
 
 
 
