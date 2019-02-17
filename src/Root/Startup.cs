@@ -99,7 +99,11 @@ namespace Root
 
         private static void MapWebApi(IApplicationBuilder app)
         {
-            app.Map("/api", apiApp => { apiApp.UseMvc(); });
+            app.Map("/api", apiApp =>
+            {
+                apiApp.UseMiddleware<ExceptionHandler>();
+                apiApp.UseMvc();
+            });
         }
         
         private static void MapStaticFiles(IApplicationBuilder app)
