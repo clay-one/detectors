@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -25,7 +20,7 @@ namespace Root
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     IHostingEnvironment hostingEnvironment = hostingContext.HostingEnvironment;
-                    
+
                     config.AddJsonFile("appsettings.json", true, true);
                     config.AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", true, true);
                     config.AddJsonFile("connections.json", true, true);
@@ -35,8 +30,7 @@ namespace Root
                 .ConfigureLogging((hostingContext, logging) =>
                 {
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    logging.AddConsole();
-                    logging.AddDebug();
+                    logging.AddLog4Net("log4net.config", true);
                 })
                 .UseIISIntegration()
                 .UseDefaultServiceProvider((context, options) =>

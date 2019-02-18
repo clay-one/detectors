@@ -1,6 +1,6 @@
 ﻿using Common;
-//using log4net;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using ServiceStack;
 using System;
 using System.Threading.Tasks;
@@ -10,12 +10,12 @@ namespace Root.Pipeline
     public class ExceptionHandler
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionHandler> _logger;
 
-        //private static readonly ILog Logger = Log4NetHelper.GetLogger(typeof(ExceptionHandler));
-
-        public ExceptionHandler(RequestDelegate next)
+        public ExceptionHandler(RequestDelegate next, ILogger<ExceptionHandler> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -24,20 +24,20 @@ namespace Root.Pipeline
             {
                 await _next(context);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                await HandleExceptionAsync(context, ex);
+                await HandleExceptionAsync(context, exception);
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            //Logger.Error($"Unhandled exception occured, {nameof(exception.Message)} : {exception.Message}", exception);
+            _logger.LogError(exception, null);
 
             var result = exception.GetChainMessageList().ToJson();
             context.Response.ContentType = "application/json;charset=utf-8";
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            return context.Response.WriteAsync(result);
+            await context.Response.WriteAsync(result);
         }
     }
 }
