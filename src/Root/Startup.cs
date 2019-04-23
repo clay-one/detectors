@@ -43,6 +43,7 @@ namespace Root
                     options.Filters.Add(typeof(CustomFormatFilter));
                     
                     options.OutputFormatters.Add(new BracketsOutputFormatter());
+                    options.OutputFormatters.Add(new GigabytesBracketsOutputFormatter());
                     options.OutputFormatters.Add(new CsvOutputFormatter());
                     options.OutputFormatters.Add(new DumpOutputFormatter());
                     options.OutputFormatters.Add(new HtmlOutputFormatter());
@@ -61,6 +62,7 @@ namespace Root
                     mappings.SetMediaTypeMappingForFormat("txt", "text/plain");
                     
                     mappings.SetMediaTypeMappingForFormat("brk", "application/vnd+detectors.brackets");
+                    mappings.SetMediaTypeMappingForFormat("gigbrk", "application/vnd+detectors.gigabytesbrackets");
                     mappings.SetMediaTypeMappingForFormat("brackets", "application/vnd+detectors.brackets");
                     mappings.SetMediaTypeMappingForFormat("csv", "application/vnd+detectors.csv");
                     mappings.SetMediaTypeMappingForFormat("dump", "application/vnd+detectors.dump");
