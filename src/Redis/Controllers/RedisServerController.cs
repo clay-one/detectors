@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Detectors.Redis.Configuration;
 using Detectors.Redis.Util;
 using Microsoft.AspNetCore.Mvc;
@@ -72,7 +73,7 @@ namespace Detectors.Redis.Controllers
                 return Ok(result);
             }
         }
-        
+
         [HttpGet("raw-client-list")]
         [HttpGet("raw-client-list.{format}")]
         public IActionResult GetRawClientList(string connectionId, string hostAndPort = null)
@@ -121,8 +122,39 @@ namespace Detectors.Redis.Controllers
                     gg.Key,
                     gg.Value
                 })).ToList();
-                
-                return Ok(result);
+
+                if (result.Any())
+                    return Ok(result);
+
+                return NotFound($"No info founds for {nameof(section)} : '{section}'");
+            }
+        }
+
+        [HttpGet("info/key/{key}")]
+        [HttpGet("info/key/{key}.{format}")]
+        public IActionResult GetKeyInfo(string connectionId, string key, string hostAndPort = null)
+        {
+            using (var redis = _configuration.BuildMultiplexer(connectionId))
+            {
+                var server = redis.GetServerOrDefault(hostAndPort);
+                if (server == null)
+                    return NotFound();
+
+                var info = server.Info();
+                var result = info
+                    .SelectMany(g => g.Select(gg => new
+                        {
+                            gg.Key,
+                            gg.Value
+                        })
+                        .Where(s => key.Equals(s.Key, StringComparison.InvariantCultureIgnoreCase))
+                        .Select(v => v.Value)
+                    ).ToList();
+
+                if (result.Any())
+                    return Ok(result.First());
+
+                return NotFound($"No info founds for {nameof(key)} : '{key}'");
             }
         }
 
@@ -175,7 +207,7 @@ namespace Detectors.Redis.Controllers
                     Duration = l.Duration.TotalSeconds,
                     Command = string.Join(" ", l.Arguments.Select(a => a.ToString())).Truncate(40)
                 }).ToList();
-                
+
                 return Ok(result);
             }
         }
