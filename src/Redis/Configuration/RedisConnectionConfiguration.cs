@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ServiceStack;
 using StackExchange.Redis;
 
 namespace Detectors.Redis.Configuration
@@ -12,12 +13,14 @@ namespace Detectors.Redis.Configuration
         public int? ConnectRetry { get; set; }
         public int? ConnectTimeout { get; set; }
         public int? DefaultDatabase { get; set; }
+        public string Password { get; set; }
+        public string ClientName { get; set; }
 
         public ConnectionMultiplexer BuildMultiplexer()
         {
             return ConnectionMultiplexer.Connect(BuildConfigurationOptions());
         }
-        
+
         private ConfigurationOptions BuildConfigurationOptions()
         {
             var result = new ConfigurationOptions();
@@ -28,7 +31,7 @@ namespace Detectors.Redis.Configuration
 
             if (AllowAdmin.HasValue)
                 result.AllowAdmin = AllowAdmin.Value;
-            
+
             if (ConnectRetry.HasValue)
                 result.ConnectRetry = ConnectRetry.Value;
 
@@ -37,6 +40,12 @@ namespace Detectors.Redis.Configuration
 
             if (DefaultDatabase.HasValue)
                 result.DefaultDatabase = DefaultDatabase.Value;
+
+            if (Password.IsNullOrEmpty() == false)
+                result.Password = Password;
+
+            if (ClientName.IsNullOrEmpty() == false)
+                result.ClientName = ClientName;
 
             return result;
         }
